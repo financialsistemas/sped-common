@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Soap;
+namespace NFePHPv5\Common\Soap;
 
 /**
  * SoapClient based in cURL class
@@ -15,10 +15,10 @@ namespace NFePHP\Common\Soap;
  * @link      http://github.com/nfephp-org/sped-common for the canonical source repository
  */
 
-use NFePHP\Common\Soap\SoapBase;
-use NFePHP\Common\Soap\SoapInterface;
-use NFePHP\Common\Exception\SoapException;
-use NFePHP\Common\Certificate;
+use NFePHPv5\Common\Soap\SoapBase;
+use NFePHPv5\Common\Soap\SoapInterface;
+use NFePHPv5\Common\Exception\SoapException;
+use NFePHPv5\Common\Certificate;
 use Psr\Log\LoggerInterface;
 
 class SoapCurl extends SoapBase implements SoapInterface
@@ -32,7 +32,7 @@ class SoapCurl extends SoapBase implements SoapInterface
     {
         parent::__construct($certificate, $logger);
     }
-    
+
     /**
      * Send soap message to url
      * @param string $url
@@ -73,7 +73,7 @@ class SoapCurl extends SoapBase implements SoapInterface
         }
         $this->requestHead = implode("\n", $parameters);
         $this->requestBody = $envelope;
-        
+
         try {
             $this->saveTemporarilyKeyFiles();
             $oCurl = curl_init();
@@ -130,7 +130,7 @@ class SoapCurl extends SoapBase implements SoapInterface
         }
         return $this->responseBody;
     }
-    
+
     /**
      * Set proxy into cURL parameters
      * @param resource $oCurl

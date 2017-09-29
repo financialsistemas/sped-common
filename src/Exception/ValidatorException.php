@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Exception;
+namespace NFePHPv5\Common\Exception;
 
 /**
  * @category   NFePHP
@@ -21,7 +21,7 @@ class ValidatorException extends \RuntimeException implements ExceptionInterface
         }
         return new static('This XML is not valid. '.$msg);
     }
-    
+
     public static function isNotXml()
     {
         return new static('This string is not an XML');

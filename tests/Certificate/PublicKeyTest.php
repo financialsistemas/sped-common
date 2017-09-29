@@ -1,9 +1,9 @@
 <?php
 
-namespace NFePHP\Common\Tests\Certificate;
+namespace NFePHPv5\Common\Tests\Certificate;
 
-use NFePHP\Common\Certificate\PublicKey;
-use NFePHP\Common\Certificate\VerificationInterface;
+use NFePHPv5\Common\Certificate\PublicKey;
+use NFePHPv5\Common\Certificate\VerificationInterface;
 
 class PublicKeyTest extends \PHPUnit\Framework\TestCase
 {
@@ -41,18 +41,18 @@ class PublicKeyTest extends \PHPUnit\Framework\TestCase
         $key = PublicKey::createFromContent($content);
         $this->assertEquals($key, $this->key);
     }
-    
+
     public function testGetCNPJ()
     {
         $expected = '99999090910270';
         $actual = $this->key->cnpj;
         $this->assertEquals($expected, $actual);
     }
-    
+
     public function testVerify()
     {
         $dom = new \DOMDocument();
-        $dom->load(__DIR__ . '/../fixtures/xml/NFe/nfeSignedFail.xml');        
+        $dom->load(__DIR__ . '/../fixtures/xml/NFe/nfeSignedFail.xml');
         $signature = $dom->getElementsByTagName('Signature')->item(0);
         $sigMethAlgo = $signature->getElementsByTagName('SignatureMethod')->item(0)->getAttribute('Algorithm');
         if ($sigMethAlgo == 'http://www.w3.org/2000/09/xmldsig#rsa-sha1') {

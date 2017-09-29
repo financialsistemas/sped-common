@@ -1,10 +1,10 @@
 <?php
 
-namespace NFePHP\Common\Tests;
+namespace NFePHPv5\Common\Tests;
 
-use NFePHP\Common\Signer;
-use NFePHP\Common\SignerException;
-use NFePHP\Common\Certificate;
+use NFePHPv5\Common\Signer;
+use NFePHPv5\Common\SignerException;
+use NFePHPv5\Common\Certificate;
 
 class SignerTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,7 +24,7 @@ class SignerTest extends \PHPUnit\Framework\TestCase
         $actual = Signer::isSigned($xmlsign);
         $this->assertTrue($actual);
     }
-    
+
     /**
      * @covers Signer::isSigned
      * @covers Signer::existsSignature
@@ -43,7 +43,7 @@ class SignerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @covers Signer::existsSignature
-     * @expectedException NFePHP\Common\Exception\SignerException
+     * @expectedException NFePHPv5\Common\Exception\SignerException
      */
     public function testSignFailNotXML()
     {
@@ -52,11 +52,11 @@ class SignerTest extends \PHPUnit\Framework\TestCase
         $content = "<html><body></body></html>";
         $xmlsign = Signer::sign($certificate, $content, 'infNFe', 'Id');
     }
-    
+
     /**
      * @covers Signer::existsSignature
      * @covers Signer::digestCheck
-     * @expectedException NFePHP\Common\Exception\SignerException
+     * @expectedException NFePHPv5\Common\Exception\SignerException
      */
     public function testIsSignedFailTagNotFound()
     {
@@ -64,13 +64,13 @@ class SignerTest extends \PHPUnit\Framework\TestCase
         $xml = file_get_contents($file);
         $actual = Signer::isSigned($xml, 'infCTe');
     }
-    
+
     /**
      * @covers Signer::existsSignature
      * @covers Signer::digestCheck
      * @covers Signer::canonize
      * @covers Signer::makeDigest
-     * @expectedException NFePHP\Common\Exception\SignerException
+     * @expectedException NFePHPv5\Common\Exception\SignerException
      */
     public function testIsSignedFailDigest()
     {
@@ -78,14 +78,14 @@ class SignerTest extends \PHPUnit\Framework\TestCase
         $xml = file_get_contents($file);
         $actual = Signer::isSigned($xml);
     }
-    
+
     /**
      * @covers Signer::existsSignature
      * @covers Signer::digestCheck
      * @covers Signer::signatureCheck
      * @covers Signer::canonize
      * @covers Signer::makeDigest
-     * @expectedException NFePHP\Common\Exception\SignerException
+     * @expectedException NFePHPv5\Common\Exception\SignerException
      */
     public function testIsSignedFailSignature()
     {
@@ -93,7 +93,7 @@ class SignerTest extends \PHPUnit\Framework\TestCase
         $xml = file_get_contents($file);
         $actual = Signer::isSigned($xml);
     }
-    
+
     /**
      * @covers Signer::removeSignature
      * @covers Signer::existsSignature

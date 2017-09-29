@@ -1,14 +1,14 @@
 <?php
 
-namespace NFePHP\Common\Tests\Soap;
+namespace NFePHPv5\Common\Tests\Soap;
 
-use NFePHP\Common\Soap\SoapFake;
-use NFePHP\Common\Certificate;
+use NFePHPv5\Common\Soap\SoapFake;
+use NFePHPv5\Common\Certificate;
 
 class SoapFakeTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_PFX_FILE = '/../fixtures/certs/certificado_teste.pfx';
-    
+
     /**
      * @covers SoapBase::__construct
      */
@@ -16,19 +16,19 @@ class SoapFakeTest extends \PHPUnit\Framework\TestCase
     {
         $soap = new SoapFake();
     }
-    
+
     public function testDisableSecurity()
     {
         $soap = new SoapFake();
         $actual = $soap->disableSecurity();
         $this->assertFalse($actual);
     }
-    
+
     public function testLoadCA()
     {
         $this->assertTrue(true);
     }
-    
+
     public function testSetTemporaryFolder()
     {
         $this->assertTrue(true);
@@ -73,12 +73,12 @@ class SoapFakeTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue(true);
     }
-    
+
     public function testSend()
     {
         $this->assertTrue(true);
     }
-    
+
     public function testDisableCertValidation()
     {
         $certificate = Certificate::readPfx(file_get_contents(__DIR__ . self::TEST_PFX_FILE), 'associacao');
@@ -86,9 +86,9 @@ class SoapFakeTest extends \PHPUnit\Framework\TestCase
         $soap->disableCertValidation(true);
         $soap->loadCertificate($certificate);
     }
-    
+
     /**
-     * @expectedException NFePHP\Common\Exception\RuntimeException
+     * @expectedException NFePHPv5\Common\Exception\RuntimeException
      */
     public function testDisableCertValidationFail()
     {

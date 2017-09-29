@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common;
+namespace NFePHPv5\Common;
 
 /**
  * Class to signner a Xml
@@ -22,11 +22,11 @@ namespace NFePHP\Common;
  * @link      http://github.com/nfephp-org/sped-common for the canonical source repository
  */
 
-use NFePHP\Common\Certificate;
-use NFePHP\Common\Certificate\PublicKey;
-use NFePHP\Common\Exception\SignerException;
-use NFePHP\Common\Strings;
-use NFePHP\Common\Validator;
+use NFePHPv5\Common\Certificate;
+use NFePHPv5\Common\Certificate\PublicKey;
+use NFePHPv5\Common\Exception\SignerException;
+use NFePHPv5\Common\Strings;
+use NFePHPv5\Common\Validator;
 use DOMDocument;
 use DOMNode;
 use DOMElement;
@@ -34,7 +34,7 @@ use DOMElement;
 class Signer
 {
     private static $canonical = [true,false,null,null];
-    
+
     /**
      * Make Signature tag
      * @param Certificate $certificate
@@ -91,7 +91,7 @@ class Signer
         return (string) "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             . $dom->saveXML($dom->documentElement, LIBXML_NOXMLDECL);
     }
-    
+
     /**
      * Method that provides the signature of xml as standard SEFAZ
      * @param Certificate $certificate
@@ -216,7 +216,7 @@ class Signer
         }
         return false;
     }
-    
+
     /**
      * Check if Signature tag already exists
      * @param string $content
@@ -237,7 +237,7 @@ class Signer
         }
         return true;
     }
-    
+
     /**
      * Verify signature value from SignatureInfo node and public key
      * @param string $xml
@@ -252,7 +252,7 @@ class Signer
         $dom->formatOutput = false;
         $dom->preserveWhiteSpace = false;
         $dom->loadXML($xml);
-        
+
         $signature = $dom->getElementsByTagName('Signature')->item(0);
         $sigMethAlgo = $signature->getElementsByTagName('SignatureMethod')
             ->item(0)->getAttribute('Algorithm');
@@ -277,7 +277,7 @@ class Signer
         }
         return true;
     }
-    
+
     /**
      * Verify digest value of data node
      * @param string $xml
@@ -333,7 +333,7 @@ class Signer
         }
         return true;
     }
-    
+
     /**
      * Calculate digest value for given node
      * @param DOMNode $node
@@ -351,7 +351,7 @@ class Signer
         $hashValue = hash($algorithm, $c14n, true);
         return base64_encode($hashValue);
     }
-    
+
     /**
      * Reduced to the canonical form
      * @param DOMNode $node

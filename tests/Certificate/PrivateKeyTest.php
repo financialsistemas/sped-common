@@ -1,9 +1,9 @@
 <?php
 
-namespace NFePHP\Common\Tests\Certificate;
+namespace NFePHPv5\Common\Tests\Certificate;
 
-use NFePHP\Common\Certificate\PrivateKey;
-use NFePHP\Common\Certificate\SignatureInterface;
+use NFePHPv5\Common\Certificate\PrivateKey;
+use NFePHPv5\Common\Certificate\SignatureInterface;
 
 class PrivateKeyTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,7 +13,7 @@ class PrivateKeyTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(SignatureInterface::class, $key);
         $this->assertNotNull($key->sign('nfe'));
     }
-    
+
     /**
      * @covers PrivateKey::read
      */
@@ -25,10 +25,10 @@ class PrivateKeyTest extends \PHPUnit\Framework\TestCase
         $actual = base64_encode($key->sign($content, OPENSSL_ALGO_SHA1));
         $this->assertEquals($expected, $actual);
     }
-    
-    
+
+
     public function testToString()
-    {   
+    {
         $expected = file_get_contents(__DIR__ . '/../fixtures/certs/x99999090910270_priKEY.pem');
         $key = new PrivateKey($expected);
         $this->assertEquals($expected, "{$key}");

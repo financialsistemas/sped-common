@@ -11,7 +11,7 @@
     "pathMDFeFiles":"\/var\/www\/mdfe",
     "pathCLeFiles":"\/var\/www\/cle",
     "pathNFSeFiles":"\/var\/www\/nfse",
-    "pathCertsFiles":"\/var\/www\/nfephp\/certs\/",
+    "pathCertsFiles":"\/var\/www\/NFePHPv5\/certs\/",
     "siteUrl":"http:\/\/localhost\/nfephp",
     "schemesNFe":"PL_008f",
     "schemesCTe":"PL_CTE_104",
@@ -28,7 +28,7 @@
         "format":"P",
         "paper":"A4",
         "southpaw":"1",
-        "pathLogoFile":"\/var\/www\/nfephp\/images\/logo.jpg",
+        "pathLogoFile":"\/var\/www\/NFePHPv5\/images\/logo.jpg",
         "logoPosition":"L",
         "font":"Times",
         "printer":"hpteste"

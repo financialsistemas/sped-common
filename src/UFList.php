@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common;
+namespace NFePHPv5\Common;
 
 /**
  * Returns IBGE code or State abbreviation
@@ -14,7 +14,7 @@ namespace NFePHP\Common;
  * @link       http://github.com/nfephp-org/sped-common for the canonical source repository
  */
 
-use NFePHP\Common\Exception\InvalidArgumentException;
+use NFePHPv5\Common\Exception\InvalidArgumentException;
 
 class UFList
 {
@@ -50,7 +50,7 @@ class UFList
         92=>'SVCAN',
         93=>'SVCRS'
     ];
-    
+
     /**
      * Returns abbreviation of state from your IBGE code
      * @param int $code
@@ -66,7 +66,7 @@ class UFList
         }
         return self::$uflist[$code];
     }
-    
+
     /**
      * Returns IBGE code from abbreviation of state
      * @param string $uf
@@ -84,7 +84,7 @@ class UFList
         }
         return $codelist[$uf];
     }
-    
+
     /**
      * Returns UF list with UF as keys
      * @return array
@@ -93,7 +93,7 @@ class UFList
     {
         return array_flip(self::$uflist);
     }
-    
+
     /**
      * Returns UF list with Code as keys
      * @return array

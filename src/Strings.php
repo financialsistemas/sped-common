@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common;
+namespace NFePHPv5\Common;
 
 /**
  * Classe auxiliar para o tratamento de strings
@@ -31,7 +31,7 @@ class Strings
         $newstr = preg_replace("/[^a-zA-Z0-9 @,-.;:\/]/", "", $newstr);
         return $newstr;
     }
-    
+
     /**
      * Remove all non numeric characters from string
      * @param string $string
@@ -41,7 +41,7 @@ class Strings
     {
         return preg_replace("/[^0-9]/", "", $string);
     }
-    
+
     /**
      * Remove unwanted attributes, prefixes, sulfixes and other control
      * characters like \r \n \s \t
@@ -67,7 +67,7 @@ class Strings
         }
         return $retXml;
     }
-    
+
     /**
      * Remove all characters between markers
      * @param string $string
@@ -85,7 +85,7 @@ class Strings
         $textToDelete = substr($string, $beginningPos, ($endPos + strlen($end)) - $beginningPos);
         return str_replace($textToDelete, '', $string);
     }
-    
+
     /**
      * Clears the xml after adding the protocol, removing repeated namespaces
      * @param string $string
@@ -104,7 +104,7 @@ class Strings
         }
         return $procXML;
     }
-    
+
     /**
      * Remove some alien chars from txt
      * @param string $txt
@@ -120,7 +120,7 @@ class Strings
         $txt = str_replace(["| "," |"], "|", $txt);
         return $txt;
     }
-    
+
     /**
      * Creates a string ramdomically with the specified length
      * @param int $length

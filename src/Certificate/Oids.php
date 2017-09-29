@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Certificate;
+namespace NFePHPv5\Common\Certificate;
 
 /**
  * Class to obtain the list of OID Object Identifier of encrypted data
@@ -21,7 +21,7 @@ class Oids
      * @var array
      */
     private static $oidsTable = array();
-            
+
     /**
      * Return Oid name
      * @param string $key formated OID numeric key
@@ -35,7 +35,7 @@ class Oids
         }
         return '';
     }
-    
+
     /**
      * Returns all oids in the list
      * @return array
@@ -45,7 +45,7 @@ class Oids
         self::loadOids();
         return self::$oidsTable;
     }
-    
+
     /**
      * Load list of oids
      */

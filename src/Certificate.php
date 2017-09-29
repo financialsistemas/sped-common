@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common;
+namespace NFePHPv5\Common;
 
 /**
  * Certificate class for management and use of digital certificates A1 (PKCS # 12)
@@ -12,12 +12,12 @@ namespace NFePHP\Common;
  * @link       http://github.com/nfephp-org/sped-common for the canonical source repository
  */
 
-use NFePHP\Common\Certificate\PrivateKey;
-use NFePHP\Common\Certificate\PublicKey;
-use NFePHP\Common\Certificate\CertificationChain;
-use NFePHP\Common\Certificate\SignatureInterface;
-use NFePHP\Common\Certificate\VerificationInterface;
-use NFePHP\Common\Exception\CertificateException;
+use NFePHPv5\Common\Certificate\PrivateKey;
+use NFePHPv5\Common\Certificate\PublicKey;
+use NFePHPv5\Common\Certificate\CertificationChain;
+use NFePHPv5\Common\Certificate\SignatureInterface;
+use NFePHPv5\Common\Certificate\VerificationInterface;
+use NFePHPv5\Common\Exception\CertificateException;
 
 class Certificate implements SignatureInterface, VerificationInterface
 {
@@ -30,12 +30,12 @@ class Certificate implements SignatureInterface, VerificationInterface
      * @var PublicKey
      */
     public $publicKey;
-    
+
     /**
      * @var CertificationChain
      */
     public $chainKeys;
-    
+
     /**
      * Constructor
      * @param PrivateKey $privateKey
@@ -48,7 +48,7 @@ class Certificate implements SignatureInterface, VerificationInterface
         $this->publicKey = $publicKey;
         $this->chainKeys = $chainKeys;
     }
-    
+
     /**
      * Read PFX and return this class
      * @param string $content
@@ -74,7 +74,7 @@ class Certificate implements SignatureInterface, VerificationInterface
             new CertificationChain($chain)
         );
     }
-    
+
     /**
      * Returns a PFX string with certification chain if exists
      * @param string $password
@@ -134,7 +134,7 @@ class Certificate implements SignatureInterface, VerificationInterface
     {
         return $this->publicKey->isExpired();
     }
-    
+
     /**
      * Gets CNPJ by OID '2.16.76.1.3.3' from ASN.1 certificate struture
      * @return string
@@ -159,7 +159,7 @@ class Certificate implements SignatureInterface, VerificationInterface
     {
         return $this->publicKey->verify($data, $signature, $algorithm);
     }
-    
+
     /**
      * Returns public key and chain in PEM format
      * @return string

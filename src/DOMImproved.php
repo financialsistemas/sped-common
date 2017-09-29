@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common;
+namespace NFePHPv5\Common;
 
 /**
  * Extends DOMDocument
@@ -23,7 +23,7 @@ class DOMImproved extends DOMDocument
      * @var array
      */
     public $error = [];
-    
+
     /**
      * @param string $version
      * @param string $charset
@@ -34,7 +34,7 @@ class DOMImproved extends DOMDocument
         $this->formatOutput = false;
         $this->preserveWhiteSpace = false;
     }
-    
+
     /**
      * Loads string in DOMDocument
      * @param string $content content of xml
@@ -51,7 +51,7 @@ class DOMImproved extends DOMDocument
         }
         return true;
     }
-    
+
     /**
      * Load xml from path
      * @param string $filename
@@ -66,7 +66,7 @@ class DOMImproved extends DOMDocument
         $content = file_get_contents($filename);
         $this->loadXMLString($content);
     }
-            
+
     /**
      * Extrai o valor do node DOM
      * @param string $nodeName identificador da TAG do xml
@@ -84,7 +84,7 @@ class DOMImproved extends DOMDocument
         }
         return '';
     }
-    
+
     /**
      * getValue
      * @param DOMElement $node
@@ -100,7 +100,7 @@ class DOMImproved extends DOMDocument
             $node->getElementsByTagName($name)->item(0)->nodeValue : '';
         return html_entity_decode($texto, ENT_QUOTES, 'UTF-8');
     }
-    
+
     /**
      * getNode
      * Retorna o node solicitado
@@ -116,7 +116,7 @@ class DOMImproved extends DOMDocument
         }
         return '';
     }
-    
+
     /**
      * getChave
      * @param string $nodeName
@@ -132,7 +132,7 @@ class DOMImproved extends DOMDocument
         }
         return '';
     }
-    
+
     /**
      * addChild
      * Adiciona um elemento ao node xml passado como referencia
@@ -164,7 +164,7 @@ class DOMImproved extends DOMDocument
             $parent->appendChild($temp);
         }
     }
-    
+
     /**
      * Acrescenta DOMElement a pai DOMElement
      * Caso o pai esteja vazio retorna uma exception com a mensagem
@@ -182,7 +182,7 @@ class DOMImproved extends DOMDocument
         }
         $parent->appendChild($child);
     }
-    
+
     /**
      * Append DOMElement from external documento to local Node
      * @param DOMElement $parent
@@ -194,7 +194,7 @@ class DOMImproved extends DOMDocument
         $node = $this->importNode($child, true);
         $parent->appendChild($node);
     }
-    
+
     /**
      * Append DOMElement from external documento to local Node
      * before existent node
@@ -214,7 +214,7 @@ class DOMImproved extends DOMDocument
         $node = $this->importNode($child, true);
         $parent->insertBefore($node, $bnode);
     }
-        
+
     /**
      * appChildBefore
      * Acrescenta DOMElement a pai DOMElement
@@ -237,7 +237,7 @@ class DOMImproved extends DOMDocument
         }
         $parent->insertBefore($child, $bnode);
     }
-    
+
     /**
      * addArrayChild
      * Adiciona a um DOMElemt parent, outros elementos passados em um array de DOMElements

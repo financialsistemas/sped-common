@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common;
+namespace NFePHPv5\Common;
 
 /**
  * Validation class of XML structures with respect to its established
@@ -15,7 +15,7 @@ namespace NFePHP\Common;
  * @link       http://github.com/nfephp-org/sped-common for the canonical source repository
  */
 
-use NFePHP\Common\Exception\ValidatorException;
+use NFePHPv5\Common\Exception\ValidatorException;
 use DOMDocument;
 
 class Validator
@@ -48,7 +48,7 @@ class Validator
         }
         return true;
     }
-    
+
     /**
      * Check if string is a XML
      * @param string $content

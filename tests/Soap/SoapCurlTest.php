@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Tests\Soap;
+namespace NFePHPv5\Common\Tests\Soap;
 
 class SoapCurlTest extends \PHPUnit\Framework\TestCase
 {

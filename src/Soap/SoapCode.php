@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Soap;
+namespace NFePHPv5\Common\Soap;
 
 /**
  * SoapCode return a description os HTTP Codes returned from server

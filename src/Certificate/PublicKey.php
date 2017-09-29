@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Certificate;
+namespace NFePHPv5\Common\Certificate;
 
 /**
  * Management and use of digital certificates A1 (PKCS # 12).
@@ -12,7 +12,7 @@ namespace NFePHP\Common\Certificate;
  * @link       http://github.com/nfephp-org/sped-common for the canonical source repository
  */
 
-use NFePHP\Common\Exception\CertificateException;
+use NFePHPv5\Common\Exception\CertificateException;
 
 class PublicKey implements VerificationInterface
 {
@@ -58,7 +58,7 @@ class PublicKey implements VerificationInterface
         $this->rawKey = $publicKey;
         $this->read();
     }
-    
+
     /**
      * Load class with certificate content
      * @param string $content
@@ -76,7 +76,7 @@ CONTENT;
 
         return new static($certificate);
     }
-    
+
     /**
      * Parse an X509 certificate and define the information in object
      * @link http://php.net/manual/en/function.openssl-x509-read.php
@@ -139,7 +139,7 @@ CONTENT;
         $ret = preg_replace('/-----.*[\n]?/', '', $this->rawKey);
         return preg_replace('/[\n\r]/', '', $ret);
     }
-    
+
     /**
      * Returns raw public key
      * @return string

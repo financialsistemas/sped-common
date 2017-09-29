@@ -1,8 +1,8 @@
 <?php
 
-namespace NFePHP\Common\Tests;
+namespace NFePHPv5\Common\Tests;
 
-use NFePHP\Common\DOMImproved;
+use NFePHPv5\Common\DOMImproved;
 
 class DomImprovedTest  extends \PHPUnit\Framework\TestCase
 {
@@ -10,7 +10,7 @@ class DomImprovedTest  extends \PHPUnit\Framework\TestCase
     {
         $dom = new DOMImproved();
     }
-    
+
     public function testAddArrayChild()
     {
         $this->assertTrue(true);

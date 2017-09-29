@@ -1,9 +1,9 @@
 <?php
 
-namespace NFePHP\Common\Tests\Certificate;
+namespace NFePHPv5\Common\Tests\Certificate;
 
-use NFePHP\Common\Certificate;
-use NFePHP\Common\Exception\CertificateException;
+use NFePHPv5\Common\Certificate;
+use NFePHPv5\Common\Exception\CertificateException;
 
 class CertificateTest extends \PHPUnit\Framework\TestCase
 {
@@ -42,19 +42,19 @@ class CertificateTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException NFePHP\Common\Exception\CertificateException
+     * @expectedException NFePHPv5\Common\Exception\CertificateException
      */
     public function testShouldGetExceptionWhenLoadPfxCertificate()
     {
         Certificate::readPfx(file_get_contents(__DIR__ . self::TEST_PFX_FILE), 'error');
     }
-    
+
     public function testShouldLoadChainCertificates()
     {
         $certificate = new Certificate(
             new Certificate\PrivateKey(file_get_contents(__DIR__ . self::TEST_PRIVATE_KEY)),
             new Certificate\PublicKey(file_get_contents(__DIR__ . self::TEST_PUBLIC_KEY)),
-            new Certificate\CertificationChain(file_get_contents(__DIR__ . self::TEST_CHAIN_KEYS))    
+            new Certificate\CertificationChain(file_get_contents(__DIR__ . self::TEST_CHAIN_KEYS))
         );
         $expected = file_get_contents(__DIR__ . self::TEST_EXPECTED_CHAIN);
         $actual = "{$certificate}";

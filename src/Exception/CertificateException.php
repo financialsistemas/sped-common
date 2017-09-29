@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Exception;
+namespace NFePHPv5\Common\Exception;
 
 /**
  * @category   NFePHP
@@ -40,7 +40,7 @@ class CertificateException extends \RuntimeException implements ExceptionInterfa
             'An error has occurred when verify signature, ' . static::getOpenSSLError()
         );
     }
-    
+
     protected static function getOpenSSLError()
     {
         $error = 'get follow error: ';

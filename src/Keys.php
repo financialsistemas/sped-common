@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common;
+namespace NFePHPv5\Common;
 
 /**
  * Class to create and validate the identification keys of electronic documents
@@ -57,7 +57,7 @@ class Keys
         );
         return $key . self::verifyingDigit($key);
     }
-    
+
     /**
      * Verifies that the key provided is valid
      * @param string $key
@@ -75,7 +75,7 @@ class Keys
         }
         return false;
     }
-    
+
     /**
      * This method calculates verifying digit
      * @param string $key

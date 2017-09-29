@@ -1,5 +1,5 @@
 {
-    "name": "nfephp-org/sped-common",
+    "name": "financialsistemas/sped-common",
     "type": "library",
     "description": "sped-common é parte do projeto NFePHP.",
     "keywords": [
@@ -45,12 +45,12 @@
     },
     "autoload": {
         "psr-4": {
-            "NFePHP\\Common\\": "src/"
+            "NFePHPv5\\Common\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "NFePHP\\Common\\Tests\\": "tests/"
+            "NFePHPv5\\Common\\Tests\\": "tests/"
         }
     },
     "extra": {

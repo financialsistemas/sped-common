@@ -1,14 +1,14 @@
 <?php
 
-namespace NFePHP\Common\Tests;
+namespace NFePHPv5\Common\Tests;
 
-use NFePHP\Common\Validator;
+use NFePHPv5\Common\Validator;
 
 class ValidatorTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_XML_PATH = '/fixtures/xml/';
     const TEST_XSD_PATH = '/fixtures/xsd/';
-    
+
     public function testIsValidTrue()
     {
         $xml = file_get_contents(__DIR__ . self::TEST_XML_PATH . 'NFe/2017signed.xml');
@@ -16,7 +16,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $actual = Validator::isValid($xml, $xsd);
         $this->assertTrue($actual);
     }
-    
+
     /**
      * @expectedException RuntimeException
      */
@@ -27,7 +27,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $actual = Validator::isValid($xml, $xsd);
         $this->assertFalse($actual);
     }
-    
+
     /**
      * @expectedException RuntimeException
      */
@@ -38,12 +38,12 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         $actual = Validator::isValid($xml, $xsd);
         $this->assertFalse($actual);
     }
-    
+
     public function testIsXML()
     {
         $resp = Validator::isXML('<!DOCTYPE html><html><body></body></html>');
         $this->assertFalse($resp);
-        
+
         $resp = Validator::isXML('<?xml version="1.0" standalone="yes"?><root></root>');
         $this->assertTrue($resp);
 

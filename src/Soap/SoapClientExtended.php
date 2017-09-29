@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Soap;
+namespace NFePHPv5\Common\Soap;
 
 use SoapClient;
 
@@ -15,7 +15,7 @@ class SoapClientExtended extends SoapClient
     {
         parent::SoapClient($wsdl, $options);
     }
-    
+
     /**
      * __doRequest
      * Changes the original behavior of the class by removing prefixes,

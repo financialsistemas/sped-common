@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common;
+namespace NFePHPv5\Common;
 
 /**
  * Returns Time Zone Strings for use of DateTime classes
@@ -14,7 +14,7 @@ namespace NFePHP\Common;
  * @link       http://github.com/nfephp-org/sped-common for the canonical source repository
  */
 
-use NFePHP\Common\UFList;
+use NFePHPv5\Common\UFList;
 
 class TimeZoneByUF
 {
@@ -47,7 +47,7 @@ class TimeZoneByUF
         'SP'=>'America/Sao_Paulo',
         'TO'=>'America/Araguaina'
     ];
-   
+
     /**
      * Return timezone string
      * @param string $uf

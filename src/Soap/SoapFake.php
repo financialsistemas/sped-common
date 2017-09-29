@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Soap;
+namespace NFePHPv5\Common\Soap;
 
 /**
  * Soap fake class used for development only
@@ -14,10 +14,10 @@ namespace NFePHP\Common\Soap;
  * @author    Roberto L. Machado <linux.rlm at gmail dot com>
  * @link      http://github.com/nfephp-org/sped-common for the canonical source repository
  */
-use NFePHP\Common\Soap\SoapBase;
-use NFePHP\Common\Soap\SoapInterface;
-use NFePHP\Common\Exception\SoapException;
-use NFePHP\Common\Certificate;
+use NFePHPv5\Common\Soap\SoapBase;
+use NFePHPv5\Common\Soap\SoapInterface;
+use NFePHPv5\Common\Exception\SoapException;
+use NFePHPv5\Common\Certificate;
 use Psr\Log\LoggerInterface;
 
 class SoapFake extends SoapBase implements SoapInterface
@@ -31,7 +31,7 @@ class SoapFake extends SoapBase implements SoapInterface
     {
         parent::__construct($certificate, $logger);
     }
-    
+
     public function send(
         $url,
         $operation = '',
@@ -58,7 +58,7 @@ class SoapFake extends SoapBase implements SoapInterface
         }
         $requestHead = implode("\n", $parameters);
         $requestBody = $envelope;
-        
+
         return json_encode([
             'url' => $url,
             'operation' => $operation,

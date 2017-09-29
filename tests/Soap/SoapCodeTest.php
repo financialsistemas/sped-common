@@ -1,8 +1,8 @@
 <?php
 
-namespace NFePHP\Common\Tests\Soap;
+namespace NFePHPv5\Common\Tests\Soap;
 
-use NFePHP\Common\Soap\SoapCode;
+use NFePHPv5\Common\Soap\SoapCode;
 
 class SoapCodeTest extends \PHPUnit\Framework\TestCase
 {

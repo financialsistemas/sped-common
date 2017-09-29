@@ -1,13 +1,13 @@
 <?php
 
-namespace NFePHP\Common\Tests\Certificate;
+namespace NFePHPv5\Common\Tests\Certificate;
 
-use NFePHP\Common\Certificate\CertificationChain;
+use NFePHPv5\Common\Certificate\CertificationChain;
 
 class CertificationChainTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_CHAIN_KEYS = '/../fixtures/certs/chain.pem';
-    
+
     /**
      * @covers CertificationChain::loadListChain
      */
@@ -24,7 +24,7 @@ class CertificationChainTest extends \PHPUnit\Framework\TestCase
         $list = $chain->listChain();
         $this->assertEquals(3, count($list));
     }
-    
+
     /**
      * @covers CertificationChain::loadList
      */
@@ -35,7 +35,7 @@ class CertificationChainTest extends \PHPUnit\Framework\TestCase
         $list = $chain->listChain();
         $this->assertEquals(3, count($list));
     }
-    
+
     /**
      * @covers CertificationChain::isBinary
      * @covers CertificationChain::rawString
@@ -52,7 +52,7 @@ class CertificationChainTest extends \PHPUnit\Framework\TestCase
         $list = $chain->listChain();
         $this->assertEquals(3, count($list));
     }
-    
+
     public function testRemoveExiredCertificates()
     {
         $this->assertTrue(true);

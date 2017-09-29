@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Certificate;
+namespace NFePHPv5\Common\Certificate;
 
 /**
  * Class for management and use of digital certificates A1 (PKCS # 12)
@@ -12,7 +12,7 @@ namespace NFePHP\Common\Certificate;
  * @link       http://github.com/nfephp-org/sped-common for the canonical source repository
  */
 
-use NFePHP\Common\Exception\CertificateException;
+use NFePHPv5\Common\Exception\CertificateException;
 
 class PrivateKey implements SignatureInterface
 {

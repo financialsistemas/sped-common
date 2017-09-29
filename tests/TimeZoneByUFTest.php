@@ -1,8 +1,8 @@
 <?php
 
-namespace NFePHP\Common\Tests;
+namespace NFePHPv5\Common\Tests;
 
-use NFePHP\Common\TimeZoneByUF;
+use NFePHPv5\Common\TimeZoneByUF;
 
 class TimeZoneByUFTest extends \PHPUnit\Framework\TestCase
 {

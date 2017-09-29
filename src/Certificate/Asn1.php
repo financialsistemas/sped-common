@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Certificate;
+namespace NFePHPv5\Common\Certificate;
 
 /**
  * Obtain the encrypted data contained in a digital certificate PKCS #12.
@@ -81,7 +81,7 @@ class Asn1
         }
         return $ret;
     }
-    
+
     /**
      * Get length of data field of a sequency from certifcate
      * @param string $data
@@ -101,7 +101,7 @@ class Asn1
         }
         return $len;
     }
-    
+
     /**
      * Convert number OID in ASC Hex representation includes
      * in DER format certificate

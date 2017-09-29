@@ -1,6 +1,6 @@
 <?php
 
-namespace NFePHP\Common\Soap;
+namespace NFePHPv5\Common\Soap;
 
 /**
  * SoapClient based in native PHP SoapClient class
@@ -15,14 +15,14 @@ namespace NFePHP\Common\Soap;
  * @link      http://github.com/nfephp-org/sped-common for the canonical source repository
  */
 
-use NFePHP\Common\Soap\SoapClientExtended;
-use NFePHP\Common\Soap\SoapBase;
-use NFePHP\Common\Soap\SoapInterface;
-use NFePHP\Common\Exception\SoapException;
+use NFePHPv5\Common\Soap\SoapClientExtended;
+use NFePHPv5\Common\Soap\SoapBase;
+use NFePHPv5\Common\Soap\SoapInterface;
+use NFePHPv5\Common\Exception\SoapException;
 use Exception;
 use SoapHeader;
 use SoapFault;
-use NFePHP\Common\Certificate;
+use NFePHPv5\Common\Certificate;
 use Psr\Log\LoggerInterface;
 
 class SoapNative extends SoapBase implements SoapInterface
@@ -87,7 +87,7 @@ class SoapNative extends SoapBase implements SoapInterface
         }
         return $this->responseBody;
     }
-    
+
     /**
      * Prepare connection
      * @param string $url
@@ -126,7 +126,7 @@ class SoapNative extends SoapBase implements SoapInterface
             throw SoapException::soapFault($e->getMessage());
         }
     }
-    
+
     /**
      * Set parameters for proxy
      * @param array $params
