@@ -48,7 +48,7 @@
     },
     "autoload": {
         "psr-4": {
-          "NFePHP\\Common\\": "src/" 
+          "NFePHP\\CommonV4\\": "src/" 
         } 
     },
     "extra": {
