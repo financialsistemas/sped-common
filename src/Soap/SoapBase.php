@@ -1,6 +1,13 @@
 <?php
 
-namespace NFePHPv5\Common\Soap;
+namespace NFePHP\Common\Soap;
+
+use NFePHP\Common\Certificate;
+use NFePHP\Common\Exception\RuntimeException;
+use NFePHP\Common\Strings;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
+use Psr\Log\LoggerInterface;
 
 /**
  * Soap base class
@@ -8,22 +15,12 @@ namespace NFePHPv5\Common\Soap;
  * @category  NFePHP
  * @package   NFePHP\Common\Soap\SoapBase
  * @copyright NFePHP Copyright (c) 2017
+ * @author    Roberto L. Machado <linux.rlm at gmail dot com>
  * @license   http://www.gnu.org/licenses/lgpl.txt LGPLv3+
  * @license   https://opensource.org/licenses/MIT MIT
  * @license   http://www.gnu.org/licenses/gpl.txt GPLv3+
- * @author    Roberto L. Machado <linux.rlm at gmail dot com>
  * @link      http://github.com/nfephp-org/sped-nfse for the canonical source repository
  */
-
-use NFePHPv5\Common\Certificate;
-use NFePHPv5\Common\Soap\SoapInterface;
-use NFePHPv5\Common\Exception\SoapException;
-use NFePHPv5\Common\Exception\RuntimeException;
-use NFePHPv5\Common\Strings;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Adapter\Local;
-use Psr\Log\LoggerInterface;
-
 abstract class SoapBase implements SoapInterface
 {
     /**
@@ -59,7 +56,7 @@ abstract class SoapBase implements SoapInterface
      */
     protected $certificate;
     /**
-     * @var LoggerInterface
+     * @var LoggerInterface|null
      */
     protected $logger;
     /**
@@ -113,7 +110,7 @@ abstract class SoapBase implements SoapInterface
     /**
      * @var bool
      */
-    protected $encriptPrivateKey = true;
+    protected $encriptPrivateKey = false;
     /**
      * @var bool
      */
@@ -148,38 +145,36 @@ abstract class SoapBase implements SoapInterface
     public $waitingTime = 45;
 
     /**
-     * Constructor
-     * @param Certificate $certificate
-     * @param LoggerInterface $logger
+     * SoapBase constructor.
+     * @param Certificate|null $certificate
+     * @param LoggerInterface|null $logger
      */
     public function __construct(
         Certificate $certificate = null,
         LoggerInterface $logger = null
     ) {
         $this->logger = $logger;
-        $this->certificate = $this->checkCertValidity($certificate);
+        $this->loadCertificate($certificate);
         $this->setTemporaryFolder(sys_get_temp_dir() . '/sped/');
+
+        if (null !== $certificate) {
+            $this->saveTemporarilyKeyFiles();
+        }
     }
 
     /**
-     * Check if certificate is valid
+     * Check if certificate is valid to currently used date
      * @param Certificate $certificate
-     * @return Certificate
-     * @throws RuntimeException
+     * @return void
+     * @throws Certificate\Exception\Expired
      */
-    private function checkCertValidity(Certificate $certificate = null)
+    private function isCertificateExpired(Certificate $certificate = null)
     {
-        if ($this->disableCertValidation) {
-            return $certificate;
-        }
-        if (!empty($certificate)) {
-            if ($certificate->isExpired()) {
-                throw new RuntimeException(
-                    'The validity of the certificate has expired.'
-                );
+        if (!$this->disableCertValidation) {
+            if (null !== $certificate && $certificate->isExpired()) {
+                throw new Certificate\Exception\Expired($certificate);
             }
         }
-        return $certificate;
     }
 
     /**
@@ -194,11 +189,11 @@ abstract class SoapBase implements SoapInterface
     /**
      * Disables the security checking of host and peer certificates
      * @param bool $flag
+     * @return bool
      */
     public function disableSecurity($flag = false)
     {
-        $this->disablesec = $flag;
-        return $this->disablesec;
+        return $this->disablesec = $flag;
     }
 
     /**
@@ -208,13 +203,13 @@ abstract class SoapBase implements SoapInterface
      */
     public function disableCertValidation($flag = true)
     {
-        $this->disableCertValidation = $flag;
-        return $this->disableCertValidation;
+        return $this->disableCertValidation = $flag;
     }
 
     /**
      * Load path to CA and enable to use on SOAP
      * @param string $capath
+     * @return void
      */
     public function loadCA($capath)
     {
@@ -224,24 +219,40 @@ abstract class SoapBase implements SoapInterface
     }
 
     /**
-     * Set option to encript private key before save in filesystem
+     * Set option to encrypt private key before save in filesystem
      * for an additional layer of protection
      * @param bool $encript
      * @return bool
      */
     public function setEncriptPrivateKey($encript = true)
     {
-        return $this->encriptPrivateKey = $encript;
+        $this->encriptPrivateKey = $encript;
+        if (null !== $this->filesystem) {
+            $this->removeTemporarilyFiles();
+        }
+        if (null !== $this->certificate) {
+            $this->saveTemporarilyKeyFiles();
+        }
+        return $this->encriptPrivateKey;
     }
 
     /**
      * Set another temporayfolder for saving certificates for SOAP utilization
      * @param string $folderRealPath
+     * @return void
      */
     public function setTemporaryFolder($folderRealPath)
     {
+        if (null !== $this->filesystem) {
+            $this->removeTemporarilyFiles();
+        }
+
         $this->tempdir = $folderRealPath;
         $this->setLocalFolder($folderRealPath);
+
+        if (null !== $this->certificate) {
+            $this->saveTemporarilyKeyFiles();
+        }
     }
 
     /**
@@ -265,17 +276,22 @@ abstract class SoapBase implements SoapInterface
     }
 
     /**
-     * Set certificate class for SSL comunications
+     * Set certificate class for SSL communications
      * @param Certificate $certificate
+     * @return void
      */
-    public function loadCertificate(Certificate $certificate)
+    public function loadCertificate(Certificate $certificate = null)
     {
-        $this->certificate = $this->checkCertValidity($certificate);
+        $this->isCertificateExpired($certificate);
+        if (null !== $certificate) {
+            $this->certificate = $certificate;
+        }
     }
 
     /**
      * Set logger class
      * @param LoggerInterface $logger
+     * @return LoggerInterface
      */
     public function loadLogger(LoggerInterface $logger)
     {
@@ -285,6 +301,7 @@ abstract class SoapBase implements SoapInterface
     /**
      * Set timeout for communication
      * @param int $timesecs
+     * @return int
      */
     public function timeout($timesecs)
     {
@@ -294,7 +311,7 @@ abstract class SoapBase implements SoapInterface
     /**
      * Set security protocol
      * @param int $protocol
-     * @return type Description
+     * @return int
      */
     public function protocol($protocol = self::SSL_DEFAULT)
     {
@@ -304,7 +321,7 @@ abstract class SoapBase implements SoapInterface
     /**
      * Set prefixes
      * @param array $prefixes
-     * @return string
+     * @return string[]
      */
     public function setSoapPrefix($prefixes = [])
     {
@@ -314,9 +331,10 @@ abstract class SoapBase implements SoapInterface
     /**
      * Set proxy parameters
      * @param string $ip
-     * @param int $port
+     * @param int    $port
      * @param string $user
      * @param string $password
+     * @return void
      */
     public function proxy($ip, $port, $user, $password)
     {
@@ -327,7 +345,15 @@ abstract class SoapBase implements SoapInterface
     }
 
     /**
-     * Send message to webservice
+     * @param string $url
+     * @param string $operation
+     * @param string $action
+     * @param int $soapver
+     * @param array $parameters
+     * @param array $namespaces
+     * @param string $request
+     * @param null $soapheader
+     * @return mixed
      */
     abstract public function send(
         $url,
@@ -344,40 +370,94 @@ abstract class SoapBase implements SoapInterface
      * Mount soap envelope
      * @param string $request
      * @param array $namespaces
-     * @param \SOAPHeader $header
+     * @param int $soapVer
+     * @param \SoapHeader $header
      * @return string
      */
     protected function makeEnvelopeSoap(
         $request,
         $namespaces,
-        $soapver = SOAP_1_2,
+        $soapVer = SOAP_1_2,
         $header = null
     ) {
-        $prefix = $this->prefixes[$soapver];
-        $envelope = "<$prefix:Envelope";
+        $prefix = $this->prefixes[$soapVer];
+        $envelopeAttributes = $this->getStringAttributes($namespaces);
+        return $this->mountEnvelopString(
+            $prefix,
+            $envelopeAttributes,
+            $this->mountSoapHeaders($prefix, $header),
+            $request
+        );
+    }
+
+    /**
+     * Create a envelop string
+     * @param string $envelopPrefix
+     * @param string $envelopAttributes
+     * @param string $header
+     * @param string $bodyContent
+     * @return string
+     */
+    private function mountEnvelopString(
+        $envelopPrefix,
+        $envelopAttributes = '',
+        $header = '',
+        $bodyContent = ''
+    ) {
+        return sprintf(
+            '<%s:Envelope %s>' . $header . '<%s:Body>%s</%s:Body></%s:Envelope>',
+            $envelopPrefix,
+            $envelopAttributes,
+            $envelopPrefix,
+            $bodyContent,
+            $envelopPrefix,
+            $envelopPrefix
+        );
+    }
+
+    /**
+     * Create a haeader tag
+     * @param string $envelopPrefix
+     * @param \SoapHeader $header
+     * @return string
+     */
+    private function mountSoapHeaders($envelopPrefix, $header = null)
+    {
+        if (null === $header) {
+            return '';
+        }
+        $headerItems = '';
+        foreach ($header->data as $key => $value) {
+            $headerItems .= '<' . $key . '>' . $value . '</' . $key . '>';
+        }
+        return sprintf(
+            '<%s:Header><%s xmlns="%s">%s</%s></%s:Header>',
+            $envelopPrefix,
+            $header->name,
+            $header->namespace === null ? '' : $header->namespace,
+            $headerItems,
+            $header->name,
+            $envelopPrefix
+        );
+    }
+
+    /**
+     * Get attributes
+     * @param array $namespaces
+     * @return string
+     */
+    private function getStringAttributes($namespaces = [])
+    {
+        $envelopeAttributes = '';
         foreach ($namespaces as $key => $value) {
-            $envelope .= " $key=\"$value\"";
+            $envelopeAttributes .= $key . '="' . $value . '" ';
         }
-        $envelope .= ">";
-        $soapheader = "<$prefix:Header/>";
-        if (!empty($header)) {
-            $ns = !empty($header->namespace) ? $header->namespace : '';
-            $name = $header->name;
-            $soapheader = "<$prefix:Header>";
-            $soapheader .= "<$name xmlns=\"$ns\">";
-            foreach ($header->data as $key => $value) {
-                $soapheader .= "<$key>$value</$key>";
-            }
-            $soapheader .= "</$name></$prefix:Header>";
-        }
-        $envelope .= $soapheader;
-        $envelope .= "<$prefix:Body>$request</$prefix:Body>"
-            . "</$prefix:Envelope>";
-        return $envelope;
+        return $envelopeAttributes;
     }
 
     /**
      * Temporarily saves the certificate keys for use cURL or SoapClient
+     * @return void
      */
     public function saveTemporarilyKeyFiles()
     {
@@ -387,9 +467,9 @@ abstract class SoapBase implements SoapInterface
             );
         }
         $this->certsdir = $this->certificate->getCnpj() . '/certs/';
-        $this->prifile = $this->certsdir. Strings::randomString(10).'.pem';
-        $this->pubfile = $this->certsdir . Strings::randomString(10).'.pem';
-        $this->certfile = $this->certsdir . Strings::randomString(10).'.pem';
+        $this->prifile = $this->certsdir . Strings::randomString(10) . '.pem';
+        $this->pubfile = $this->certsdir . Strings::randomString(10) . '.pem';
+        $this->certfile = $this->certsdir . Strings::randomString(10) . '.pem';
         $ret = true;
         $private = $this->certificate->privateKey;
         if ($this->encriptPrivateKey) {
@@ -414,7 +494,7 @@ abstract class SoapBase implements SoapInterface
         );
         $ret &= $this->filesystem->put(
             $this->certfile,
-            $private."{$this->certificate}"
+            $private . "{$this->certificate}"
         );
         if (!$ret) {
             throw new RuntimeException(
@@ -425,6 +505,7 @@ abstract class SoapBase implements SoapInterface
 
     /**
      * Delete all files in folder
+     * @return void
      */
     public function removeTemporarilyFiles()
     {
@@ -440,8 +521,8 @@ abstract class SoapBase implements SoapInterface
         //utilize a API. Outra solução para remover arquivos "perdidos" pode ser
         //encontrada oportunamente.
         $dt = new \DateTime();
-        $tint = new \DateInterval("PT".$this->waitingTime."M");
-        $tint->invert = true;
+        $tint = new \DateInterval("PT" . $this->waitingTime . "M");
+        $tint->invert = 1;
         $tsLimit = $dt->add($tint)->getTimestamp();
         foreach ($contents as $item) {
             if ($item['type'] == 'file') {
@@ -474,7 +555,7 @@ abstract class SoapBase implements SoapInterface
             return;
         }
         $this->debugdir = $this->certificate->getCnpj() . '/debug/';
-        $now = \DateTime::createFromFormat('U.u', microtime(true));
+        $now = \DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
         $time = substr($now->format("ymdHisu"), 0, 16);
         try {
             $this->filesystem->put(
@@ -485,7 +566,7 @@ abstract class SoapBase implements SoapInterface
                 $this->debugdir . $time . "_" . $operation . "_res.txt",
                 $response
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new RuntimeException(
                 'Unable to create debug files.'
             );

@@ -10,6 +10,8 @@ namespace NFePHPv5\Common;
  *     sped-mdfe,
  *     sped-nfse,
  *     sped-efinanceira
+ *     sped-esocial
+ *     sped-efdreinf
  *     e sped-esfinge
  *
  * @category  NFePHP
@@ -21,12 +23,8 @@ namespace NFePHPv5\Common;
  * @author    Roberto L. Machado <linux.rlm at gmail dot com>
  * @link      http://github.com/nfephp-org/sped-common for the canonical source repository
  */
-
-use NFePHPv5\Common\Certificate;
-use NFePHPv5\Common\Certificate\PublicKey;
-use NFePHPv5\Common\Exception\SignerException;
-use NFePHPv5\Common\Strings;
-use NFePHPv5\Common\Validator;
+use NFePHP\Common\Certificate\PublicKey;
+use NFePHP\Common\Exception\SignerException;
 use DOMDocument;
 use DOMNode;
 use DOMElement;
@@ -41,11 +39,11 @@ class Signer
      * @param string $content xml for signed
      * @param string $tagname
      * @param string $mark for URI (opcional)
-     * @param string $algorithm (opcional)
+     * @param int $algorithm (opcional)
      * @param array $canonical parameters to format node for signature (opcional)
      * @param string $rootname name of tag to insert signature block (opcional)
      * @return string
-     * @throws SignnerException
+     * @throws SignerException
      */
     public static function sign(
         Certificate $certificate,
@@ -88,26 +86,26 @@ class Signer
                 $canonical
             );
         };
-        return (string) "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             . $dom->saveXML($dom->documentElement, LIBXML_NOXMLDECL);
     }
 
     /**
      * Method that provides the signature of xml as standard SEFAZ
      * @param Certificate $certificate
-     * @param DOMDocument $dom
-     * @param DOMNode $root xml root
-     * @param DOMNode $node node to be signed
+     * @param \DOMDocument $dom
+     * @param \DOMNode $root xml root
+     * @param \DOMElement $node node to be signed
      * @param string $mark Marker signed attribute
      * @param int $algorithm cryptographic algorithm (opcional)
      * @param array $canonical parameters to format node for signature (opcional)
-     * @return DOMDocument
+     * @return \DOMDocument
      */
     private static function createSignature(
         Certificate $certificate,
         DOMDocument $dom,
         DOMNode $root,
-        DOMNode $node,
+        DOMElement $node,
         $mark,
         $algorithm = OPENSSL_ALGO_SHA1,
         $canonical = [true,false,null,null]
@@ -193,7 +191,6 @@ class Signer
         return $dom->saveXML();
     }
 
-
     /**
      * Verify if xml signature is valid
      * @param string $content
@@ -244,7 +241,7 @@ class Signer
      * @param array $canonical
      * @return boolean
      */
-    private static function signatureCheck(
+    public static function signatureCheck(
         $xml,
         $canonical = [true,false,null,null]
     ) {
@@ -282,10 +279,11 @@ class Signer
      * Verify digest value of data node
      * @param string $xml
      * @param string $tagname
-     * @return boolean
+     * @param array $canonical
+     * @return bool
      * @throws SignerException
      */
-    private static function digestCheck(
+    public static function digestCheck(
         $xml,
         $tagname = '',
         $canonical = [true,false,null,null]
@@ -307,6 +305,7 @@ class Signer
                 $entries = $xpath->query('//@Id');
                 foreach ($entries as $entry) {
                     $tagname = $entry->ownerElement->nodeName;
+                    break;
                 }
             }
         }

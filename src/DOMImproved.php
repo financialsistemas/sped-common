@@ -15,6 +15,7 @@ namespace NFePHPv5\Common;
  */
 
 use DOMDocument;
+use DOMNode;
 use DOMElement;
 
 class DOMImproved extends DOMDocument
@@ -22,8 +23,8 @@ class DOMImproved extends DOMDocument
     /**
      * @var array
      */
-    public $error = [];
-
+    public $errors = [];
+    
     /**
      * @param string $version
      * @param string $charset
@@ -36,6 +37,21 @@ class DOMImproved extends DOMDocument
     }
 
     /**
+     * Insert node AFTER reference node
+     * @param \DOMNode $newNode
+     * @param \DOMNode $referenceNode
+     * @return \DOMNode
+     */
+    public function insertAfter(\DOMNode $newNode, \DOMNode $referenceNode)
+    {
+        if ($referenceNode->nextSibling === null) {
+            return $referenceNode->parentNode->appendChild($newNode);
+        } else {
+            return $referenceNode->parentNode->insertBefore($newNode, $referenceNode->nextSibling);
+        }
+    }
+    
+    /**
      * Loads string in DOMDocument
      * @param string $content content of xml
      * @return bool
@@ -46,7 +62,7 @@ class DOMImproved extends DOMDocument
         if (substr($content, 0, 1) != '<' ||
             !$this->loadXML($content, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG)
         ) {
-            $this->error[] = $msg;
+            $this->errors[] = $msg;
             return false;
         }
         return true;
@@ -60,7 +76,7 @@ class DOMImproved extends DOMDocument
     public function loadXMLFile($filename)
     {
         if (!is_file($filename)) {
-            $this->error[] = 'Arquivo não encontrado!';
+            $this->errors[] = 'Arquivo não encontrado!';
             return false;
         }
         $content = file_get_contents($filename);
@@ -138,9 +154,9 @@ class DOMImproved extends DOMDocument
      * Adiciona um elemento ao node xml passado como referencia
      * Serão inclusos erros na array $erros[] sempre que a tag for obrigatória e
      * nenhum parâmetro for passado na variável $content e $force for false
-     * @param DOMElement $parent
+     * @param \DOMElement $parent
      * @param string $name
-     * @param string $content
+     * @param string|float|null $content
      * @param boolean $obrigatorio
      * @param string $descricao
      * @param boolean $force força a criação do elemento mesmo sem dados e não considera como erro
@@ -149,14 +165,18 @@ class DOMImproved extends DOMDocument
     public function addChild(
         DOMElement &$parent,
         $name,
-        $content = '',
+        $content,
         $obrigatorio = false,
         $descricao = '',
         $force = false
     ) {
+        if ($content === null) {
+            return;
+        }
+        $content = (string) $content;
         $content = trim($content);
         if ($obrigatorio && $content === '' && !$force) {
-            $this->erros[] = "Preenchimento Obrigatório! [$name] $descricao";
+            $this->errors[] = "Preenchimento Obrigatório! [$name] $descricao";
         }
         if ($obrigatorio || $content !== '' || $force) {
             $content = htmlspecialchars($content, ENT_QUOTES);
@@ -177,7 +197,7 @@ class DOMImproved extends DOMDocument
     public function appChild(DOMElement &$parent, DOMElement $child = null, $msg = '')
     {
         if (empty($child)) {
-            $this->erros[] = $msg;
+            $this->errors[] = $msg;
             return;
         }
         $parent->appendChild($child);
@@ -185,8 +205,8 @@ class DOMImproved extends DOMDocument
 
     /**
      * Append DOMElement from external documento to local Node
-     * @param DOMElement $parent
-     * @param DOMElement $child
+     * @param \DOMElement $parent
+     * @param \DOMElement $child
      * @return void
      */
     public function appExternalChild(DOMElement &$parent, DOMElement $child)
@@ -198,8 +218,8 @@ class DOMImproved extends DOMDocument
     /**
      * Append DOMElement from external documento to local Node
      * before existent node
-     * @param DOMElement $parent
-     * @param DOMElement $child
+     * @param \DOMElement $parent
+     * @param \DOMElement $child
      * @param string $before
      * @return void
      */
@@ -220,8 +240,8 @@ class DOMImproved extends DOMDocument
      * Acrescenta DOMElement a pai DOMElement
      * Caso o pai esteja vazio retorna uma exception com a mensagem
      * O parametro "child" pode ser vazio
-     * @param DOMElement $parent
-     * @param DOMElement $child
+     * @param \DOMElement $parent
+     * @param \DOMElement $child
      * @param string $before
      * @param string $msg
      * @return void
@@ -232,7 +252,7 @@ class DOMImproved extends DOMDocument
             empty($before) ||
             empty($bnode = $parent->getElementsByTagName($before)->item(0))
         ) {
-            $this->error[] = "$msg Node child vazio ou node <$before> não encontrado!!";
+            $this->errors[] = "$msg Node child vazio ou node <$before> não encontrado!!";
             return;
         }
         $parent->insertBefore($child, $bnode);
@@ -241,7 +261,7 @@ class DOMImproved extends DOMDocument
     /**
      * addArrayChild
      * Adiciona a um DOMElemt parent, outros elementos passados em um array de DOMElements
-     * @param DOMElement $parent
+     * @param \DOMElement $parent
      * @param array $arr
      * @return int
      */

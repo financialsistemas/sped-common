@@ -27,8 +27,27 @@ class Asn1
      */
     public static function getCNPJ($publickeyUnformated)
     {
+        //CNPJ
+        //OID = 2.16.76.1.3.3
         return self::getOIDdata('2.16.76.1.3.3', $publickeyUnformated);
     }
+    
+    /**
+     * CPF
+     * OID = 2.16.76.1.3.1 e
+     * conteúdo = nas primeiras 8 (oito) posições,
+     *  a data de nascimento do titular,
+     * no formato ddmmaaaa;
+     * nas 11 (onze) posições subseqüentes,
+     * o Cadastro de Pessoa Física (CPF) do titular;
+     * nas 11 (onze) posições subseqüentes,
+     * o número de inscrição do titular no PIS/PASEP;
+     * nas 11 (onze) posições subseqüentes,
+     * o número do Registro Geral - RG do titular;
+     * nas 6 (seis) posições subseqüentes,
+     * as siglas do órgão expedidor do RG
+     * e respectiva UF.
+     */
 
     /**
      * Recovers information regarding the OID contained in the certificate
@@ -36,7 +55,7 @@ class Asn1
      * type "sequence", as the first element of the structure
      * @param string $publickeyUnformated
      * @param string $oidNumber OID formated number
-     * @return array
+     * @return string
      */
     public static function getOIDdata($oidNumber, $publickeyUnformated)
     {
@@ -51,6 +70,10 @@ class Asn1
         //because there are usually only one OID of each type in
         //the certificate, but can be more. In this case only
         //first occurency will be returned.
+        if (!strpos($certder, $oidMarker)) {
+            //OID not found return empty
+            return '';
+        }
         $partes = explode($oidMarker, $certder);
         //if count($partes) > 1 so OID was located
         $tot = count($partes);
@@ -72,7 +95,7 @@ class Asn1
             //converts do decimal the second digit of sequency
             $bytes = strlen($oidMarker);
             //get length of OID data
-            $len = self::getLength((string) $data);
+            $len = self::getLength($data);
             //get only a string with bytes belongs to OID
             $oidData = substr($data, 2 + $bytes, $len-($bytes));
             //parse OID data many possibel formats and structures
@@ -121,7 +144,7 @@ class Asn1
                 $bun +=  $partes[$num];
                 $abBinary[] = $bun;
             } else {
-                $abBinary = self::xBase128((array) $abBinary, (integer) $partes[$num], true);
+                $abBinary = self::xBase128($abBinary, (integer) $partes[$num], true);
             }
         }
         $value = chr(0x06) . chr(count($abBinary));
@@ -136,7 +159,7 @@ class Asn1
      * @param array $abIn
      * @param integer $qIn
      * @param boolean $flag
-     * @return integer
+     * @return array
      */
     protected static function xBase128($abIn, $qIn, $flag)
     {

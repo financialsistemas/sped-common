@@ -42,7 +42,7 @@ class SoapCurl extends SoapBase implements SoapInterface
      * @param array $parameters
      * @param array $namespaces
      * @param string $request
-     * @param \SOAPHeader $soapheader
+     * @param \SoapHeader $soapheader
      * @return string
      * @throws \NFePHP\Common\Exception\SoapException
      */
@@ -75,7 +75,6 @@ class SoapCurl extends SoapBase implements SoapInterface
         $this->requestBody = $envelope;
 
         try {
-            $this->saveTemporarilyKeyFiles();
             $oCurl = curl_init();
             $this->setCurlProxy($oCurl);
             curl_setopt($oCurl, CURLOPT_URL, $url);
@@ -98,7 +97,7 @@ class SoapCurl extends SoapBase implements SoapInterface
                 curl_setopt($oCurl, CURLOPT_KEYPASSWD, $this->temppass);
             }
             curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
-            if (! empty($envelope)) {
+            if (!empty($envelope)) {
                 curl_setopt($oCurl, CURLOPT_POST, 1);
                 curl_setopt($oCurl, CURLOPT_POSTFIELDS, $envelope);
                 curl_setopt($oCurl, CURLOPT_HTTPHEADER, $parameters);
@@ -140,9 +139,9 @@ class SoapCurl extends SoapBase implements SoapInterface
         if ($this->proxyIP != '') {
             curl_setopt($oCurl, CURLOPT_HTTPPROXYTUNNEL, 1);
             curl_setopt($oCurl, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
-            curl_setopt($oCurl, CURLOPT_PROXY, $this->proxyIP.':'.$this->proxyPort);
+            curl_setopt($oCurl, CURLOPT_PROXY, $this->proxyIP . ':' . $this->proxyPort);
             if ($this->proxyUser != '') {
-                curl_setopt($oCurl, CURLOPT_PROXYUSERPWD, $this->proxyUser.':'.$this->proxyPass);
+                curl_setopt($oCurl, CURLOPT_PROXYUSERPWD, $this->proxyUser . ':' . $this->proxyPass);
                 curl_setopt($oCurl, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
             }
         }
