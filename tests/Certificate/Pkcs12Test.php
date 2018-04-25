@@ -4,8 +4,8 @@
  * Class Pkcs12Test
  * @author Roberto L. Machado <linux dot rlm at gmail dot com>
  */
-use NFePHP\Common\Certificate\Asn;
-use NFePHP\Common\Certificate\Pkcs12;
+use NFePHP\CommonV4\Certificate\Asn;
+use NFePHP\CommonV4\Certificate\Pkcs12;
 
 class Pkcs12Test extends PHPUnit_Framework_TestCase
 {
@@ -232,7 +232,7 @@ VURh6kJDAMVhhB5URXSnHhuGrKGi
     }
 
     /**
-     * @expectedException NFePHP\Common\Exception\RuntimeException
+     * @expectedException NFePHP\CommonV4\Exception\RuntimeException
      * @expectedExceptionMessage Data de validade vencida! [Valido até 02/10/10]
      */
     public function testValidadeCertificado()
@@ -244,7 +244,7 @@ VURh6kJDAMVhhB5URXSnHhuGrKGi
     }
 
     /**
-     * @expectedException NFePHP\Common\Exception\InvalidArgumentException
+     * @expectedException NFePHP\CommonV4\Exception\InvalidArgumentException
      * @expectedExceptionMessage O Certificado fornecido pertence a outro CNPJ!!
      */
     public function testProprietarioCertificado()

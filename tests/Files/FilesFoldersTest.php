@@ -4,7 +4,7 @@
  * Class FilesFoldersTest
  * @author Roberto L. Machado <linux.rlm at gmail dot com>
  */
-use NFePHP\Common\Files\FilesFolders;
+use NFePHP\CommonV4\Files\FilesFolders;
 
 class FilesFoldersTest extends PHPUnit_Framework_TestCase
 {
@@ -46,7 +46,7 @@ class FilesFoldersTest extends PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException NFePHP\Common\Exception\InvalidArgumentException
+     * @expectedException NFePHP\CommonV4\Exception\InvalidArgumentException
      * @expectedExceptionMessage O diretório não existe /qualquercoisa !!!
      */
     public function testListDirFail()

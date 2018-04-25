@@ -3,7 +3,7 @@
  * Class DomTest
  * @author Roberto L. Machado <linux.rlm at gmail dot com>
  */
-use NFePHP\Common\Dom\Dom;
+use NFePHP\CommonV4\Dom\Dom;
 
 class DomTest extends PHPUnit_Framework_TestCase
 {
@@ -22,7 +22,7 @@ class DomTest extends PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException NFePHP\Common\Exception\InvalidArgumentException
+     * @expectedException NFePHP\CommonV4\Exception\InvalidArgumentException
      */
     public function testFailLoadXMLString()
     {
@@ -30,7 +30,7 @@ class DomTest extends PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException NFePHP\Common\Exception\InvalidArgumentException
+     * @expectedException NFePHP\CommonV4\Exception\InvalidArgumentException
      */
     public function testFailLoadXMLFile()
     {
@@ -117,7 +117,7 @@ class DomTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException NFePHP\Common\Exception\InvalidArgumentException
+     * @expectedException NFePHP\CommonV4\Exception\InvalidArgumentException
      * @expectedExceptionMessage falha de teste
      */
     public function testFailAppChild()

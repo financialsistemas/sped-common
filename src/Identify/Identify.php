@@ -1,19 +1,19 @@
 <?php
 
-namespace NFePHP\Common\Identify;
+namespace NFePHP\CommonV4\Identify;
 
 /**
  * Classe auxiliar para a identificação dos documentos eletrônicos
  * @category   NFePHP
- * @package    NFePHP\Common\Identify
+ * @package    NFePHP\CommonV4\Identify
  * @copyright  Copyright (c) 2008-2015
  * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
  * @author     Roberto L. Machado <linux.rlm at gmail dot com>
  * @link       http://github.com/nfephp-org/nfephp for the canonical source repository
  */
 
-use NFePHP\Common\Dom\Dom;
-use NFePHP\Common\Files\FilesFolders;
+use NFePHP\CommonV4\Dom\Dom;
+use NFePHP\CommonV4\Files\FilesFolders;
 
 class Identify
 {

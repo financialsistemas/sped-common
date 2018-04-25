@@ -4,7 +4,7 @@
  * Class ConfigureTest
  * @author Roberto L. Machado <linux.rlm at gmail dot com>
  */
-use NFePHP\Common\Configure\Configure;
+use NFePHP\CommonV4\Configure\Configure;
 
 class ConfigureTest extends PHPUnit_Framework_TestCase
 {

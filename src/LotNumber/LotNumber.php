@@ -1,11 +1,11 @@
 <?php
 
-namespace NFePHP\Common\LotNumber;
+namespace NFePHP\CommonV4\LotNumber;
 
 /**
  * Classe auxiliar para tratar os lotes usados na comunicação com a SEFAZ
  * @category   NFePHP
- * @package    NFePHP\Common\LotNumber
+ * @package    NFePHP\CommonV4\LotNumber
  * @copyright  Copyright (c) 2008-2015
  * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
  * @author     Roberto L. Machado <linux.rlm at gmail dot com>

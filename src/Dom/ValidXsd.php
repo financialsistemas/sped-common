@@ -1,11 +1,11 @@
 <?php
 
-namespace NFePHP\Common\Dom;
+namespace NFePHP\CommonV4\Dom;
 
 /**
  * Classe auxiliar para validar documentos XML com o seu respecitvo XSD
  * @category   NFePHP
- * @package    NFePHP\Common\Dom\ValidXsd
+ * @package    NFePHP\CommonV4\Dom\ValidXsd
  * @copyright  Copyright (c) 2008-2015
  * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
  * @author     Roberto L. Machado <linux.rlm at gmail dot com>

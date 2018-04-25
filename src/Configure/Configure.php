@@ -1,12 +1,12 @@
 <?php
 
-namespace NFePHP\Common\Configure;
+namespace NFePHP\CommonV4\Configure;
 
-use NFePHP\Common\Modules\Modules;
-use NFePHP\Common\Files\FilesFolders;
-use NFePHP\Common\Certificate\Pkcs12;
-use NFePHP\Common\Exception\InvalidArgumentException;
-use NFePHP\Common\Exception\RuntimeException;
+use NFePHP\CommonV4\Modules\Modules;
+use NFePHP\CommonV4\Files\FilesFolders;
+use NFePHP\CommonV4\Certificate\Pkcs12;
+use NFePHP\CommonV4\Exception\InvalidArgumentException;
+use NFePHP\CommonV4\Exception\RuntimeException;
 
 class Configure
 {

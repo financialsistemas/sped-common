@@ -1,24 +1,24 @@
 <?php
 
-namespace NFePHP\Common\Base;
+namespace NFePHP\CommonV4\Base;
 
 /**
  * Classe base das classes principais para a comunicação com a SEFAZ
  *
  * @category   NFePHP
- * @package    NFePHP\Common\Base
+ * @package    NFePHP\CommonV4\Base
  * @copyright  Copyright (c) 2008-2015
  * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
  * @author     Roberto L. Machado <linux.rlm at gmail dot com>
  * @link       http://github.com/nfephp-org/nfephp for the canonical source repository
  */
 
-use NFePHP\Common\Certificate\Pkcs12;
-use NFePHP\Common\DateTime\DateTime;
-use NFePHP\Common\Dom\Dom;
-use NFePHP\Common\Soap\CurlSoap;
-use NFePHP\Common\Files;
-use NFePHP\Common\Exception;
+use NFePHP\CommonV4\Certificate\Pkcs12;
+use NFePHP\CommonV4\DateTime\DateTime;
+use NFePHP\CommonV4\Dom\Dom;
+use NFePHP\CommonV4\Soap\CurlSoap;
+use NFePHP\CommonV4\Files;
+use NFePHP\CommonV4\Exception;
 
 if (!defined('NFEPHP_ROOT')) {
     define('NFEPHP_ROOT', dirname(dirname(dirname(__FILE__))));
