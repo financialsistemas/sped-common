@@ -1,7 +1,5 @@
 <?php
 
-namespace NFePHP\Common;
-
 /**
  * Classe auxiliar para o tratamento de strings
  * @category   NFePHP
@@ -12,11 +10,12 @@ namespace NFePHP\Common;
  * @link       http://github.com/nfephp-org/nfephp for the canonical source repository
  */
 
+namespace NFePHP\Common;
+
 use ForceUTF8\Encoding;
 
 class Strings
 {
-
     /**
      * Includes missing or unsupported properties in stdClass inputs
      * and Replace all unsuported chars
@@ -55,7 +54,6 @@ class Strings
     public static function replaceSpecialsChars($string)
     {
         $string = self::squashCharacters($string);
-        $string = str_replace('&', 'e', $string);
         $string = preg_replace("/[^a-zA-Z0-9 @#,-_.;:$%\/]/", "", $string);
         return preg_replace("/[<>]/", "", $string);
     }
@@ -76,14 +74,16 @@ class Strings
         if (empty($input)) {
             return $input;
         }
+        $input = str_replace(['<', '>'], '', $input);
         $input = str_replace('&', ' & ', $input);
         $input = str_replace("'", '', $input);
+        $input = str_replace('"', '', $input);
         $input = preg_replace('/(?:\s\s+)/', ' ', $input);
         //& isolated, less than, greater than, quotation marks and apostrophes
         //should be replaced by their html equivalent
         $input = str_replace(
-            ['& ','<','>','"',"'"],
-            ['&amp;','&lt;','&gt;','&quot;','&#39;'],
+            ['&', '<', '>', '"', "'"],
+            ['&amp;', '&lt;', '&gt;', '&quot;', '&#39;'],
             $input
         );
         $input = self::normalize($input);
@@ -110,10 +110,14 @@ class Strings
     public static function squashCharacters($input)
     {
         $input = trim($input);
-        $aFind = ['á','à','ã','â','é','ê','í','ó','ô','õ','ö','ú','ü',
-            'ç','Á','À','Ã','Â','É','Ê','Í','Ó','Ô','Õ','Ö','Ú','Ü','Ç'];
-        $aSubs = ['a','a','a','a','e','e','i','o','o','o','o','u','u',
-            'c','A','A','A','A','E','E','I','O','O','O','O','U','U','C'];
+        $aFind = [
+            'á', 'à', 'ã', 'â', 'é', 'ê', 'í', 'ó', 'ô', 'õ', 'ö', 'ú', 'ü',
+            'ç', 'Á', 'À', 'Ã', 'Â', 'É', 'Ê', 'Í', 'Ó', 'Ô', 'Õ', 'Ö', 'Ú', 'Ü', 'Ç'
+        ];
+        $aSubs = [
+            'a', 'a', 'a', 'a', 'e', 'e', 'i', 'o', 'o', 'o', 'o', 'u', 'u',
+            'c', 'A', 'A', 'A', 'A', 'E', 'E', 'I', 'O', 'O', 'O', 'O', 'U', 'U', 'C'
+        ];
         return str_replace($aFind, $aSubs, $input);
     }
 
@@ -127,21 +131,21 @@ class Strings
     public static function normalize($input)
     {
         //Carriage Return, Tab and Line Feed is not acceptable in strings
-        $input = str_replace(["\r","\t","\n"], "", $input);
+        $input = str_replace(["\r", "\t", "\n"], "", $input);
         //Multiple spaces is not acceptable in strings
         $input = preg_replace('/(?:\s\s+)/', ' ', $input);
         //Only UTF-8 characters is acceptable
         $input = Encoding::fixUTF8($input);
         $input = preg_replace(
-            '/[\x00-\x08\x10\x0B\x0C\x0E-\x19\x7F]'.
-            '|[\x00-\x7F][\x80-\xBF]+'.
-            '|([\xC0\xC1]|[\xF0-\xFF])[\x80-\xBF]*'.
-            '|[\xC2-\xDF]((?![\x80-\xBF])|[\x80-\xBF]{2,})'.
-            '|[\xE0-\xEF](([\x80-\xBF](?![\x80-\xBF]))|(?![\x80-\xBF]{2})|[\x80-\xBF]{3,})/S',
+            '/[\x00-\x08\x10\x0B\x0C\x0E-\x19\x7F]' .
+                '|[\x00-\x7F][\x80-\xBF]+' .
+                '|([\xC0\xC1]|[\xF0-\xFF])[\x80-\xBF]*' .
+                '|[\xC2-\xDF]((?![\x80-\xBF])|[\x80-\xBF]{2,})' .
+                '|[\xE0-\xEF](([\x80-\xBF](?![\x80-\xBF]))|(?![\x80-\xBF]{2})|[\x80-\xBF]{3,})/S',
             '',
             $input
         );
-        $input = preg_replace('/\xE0[\x80-\x9F][\x80-\xBF]'.
+        $input = preg_replace('/\xE0[\x80-\x9F][\x80-\xBF]' .
             '|\xED[\xA0-\xBF][\x80-\xBF]/S', '', $input);
         //And no other control character is acceptable either
         return preg_replace('/[[:cntrl:]]/u', '', $input);
@@ -209,11 +213,11 @@ class Strings
     public static function clearProtocoledXML($string)
     {
         $procXML = self::clearXmlString($string);
-        $aApp = array('nfe','cte','mdfe');
+        $aApp = array('nfe', 'cte', 'mdfe');
         foreach ($aApp as $app) {
             $procXML = str_replace(
-                'xmlns="http://www.portalfiscal.inf.br/'.$app.'" xmlns="http://www.w3.org/2000/09/xmldsig#"',
-                'xmlns="http://www.portalfiscal.inf.br/'.$app.'"',
+                'xmlns="http://www.portalfiscal.inf.br/' . $app . '" xmlns="http://www.w3.org/2000/09/xmldsig#"',
+                'xmlns="http://www.portalfiscal.inf.br/' . $app . '"',
                 $procXML
             );
         }
@@ -228,11 +232,11 @@ class Strings
     public static function removeSomeAlienCharsfromTxt($txt)
     {
         //remove CRs and TABs
-        $txt = str_replace(["\r","\t"], "", $txt);
+        $txt = str_replace(["\r", "\t"], "", $txt);
         //remove multiple spaces
         $txt = preg_replace('/(?:\s\s+)/', ' ', $txt);
         //remove spaces at begin and end of fields
-        $txt = str_replace(["| "," |"], "|", $txt);
+        $txt = str_replace(["| ", " |"], "|", $txt);
         return $txt;
     }
 

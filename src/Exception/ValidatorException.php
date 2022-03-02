@@ -17,13 +17,13 @@ class ValidatorException extends \RuntimeException implements ExceptionInterface
     {
         $msg = '';
         foreach ($errors as $error) {
-            $msg .= $error."\n";
+            $msg .= $error . "\n";
         }
-        return new static('This XML is not valid. '.$msg);
+        return new static('Este XML não é válido. ' . $msg);
     }
-    
+
     public static function isNotXml()
     {
-        return new static('This string is not an XML');
+        return new static('A string passada não é um XML');
     }
 }

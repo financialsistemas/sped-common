@@ -11,7 +11,7 @@ class PublicKeyTest extends \PHPUnit\Framework\TestCase
 
     protected $key;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->key = new PublicKey(file_get_contents(__DIR__ . self::TEST_PUBLIC_KEY));
     }
@@ -42,33 +42,33 @@ class PublicKeyTest extends \PHPUnit\Framework\TestCase
         $key = PublicKey::createFromContent($content);
         $this->assertEquals($key, $this->key);
     }
-    
+
     public function testGetCNPJ()
     {
         $expected = '99999090910270';
         $actual = $this->key->cnpj();
         $this->assertEquals($expected, $actual);
     }
-    
+
     public function testGetNonExistCPF()
     {
         $expected = null;
         $actual = $this->key->cpf();
         $this->assertEquals($expected, $actual);
     }
-    
+
     public function testGetCPF()
     {
-        $key = new PublicKey(file_get_contents(__DIR__.'/../fixtures/certs/e-CPF_pubkey.pem'));
+        $key = new PublicKey(file_get_contents(__DIR__ . '/../fixtures/certs/e-CPF_pubkey.pem'));
         $expected = '80767940130';
         $actual = $key->cpf();
         $this->assertEquals($expected, $actual);
     }
-    
+
     public function testVerify()
     {
         $dom = new \DOMDocument();
-        $dom->load(__DIR__ . '/../fixtures/xml/NFe/nfeSignedFail.xml');        
+        $dom->load(__DIR__ . '/../fixtures/xml/NFe/nfeSignedFail.xml');
         $signature = $dom->getElementsByTagName('Signature')->item(0);
         $sigMethAlgo = $signature->getElementsByTagName('SignatureMethod')->item(0)->getAttribute('Algorithm');
         if ($sigMethAlgo == 'http://www.w3.org/2000/09/xmldsig#rsa-sha1') {
@@ -78,7 +78,7 @@ class PublicKeyTest extends \PHPUnit\Framework\TestCase
         }
         $certificateContent = $signature->getElementsByTagName('X509Certificate')->item(0)->nodeValue;
         $publicKey = PublicKey::createFromContent($certificateContent);
-        $signContent = $signature->getElementsByTagName('SignedInfo')->item(0)->C14N(true, false, null, null);
+        $signContent = $signature->getElementsByTagName('SignedInfo')->item(0)->C14N(true, false);
         $signatureValue = $signature->getElementsByTagName('SignatureValue')->item(0)->nodeValue;
         $decodedSignature = base64_decode(str_replace(array("\r", "\n"), '', $signatureValue));
         $actual = $publicKey->verify($signContent, $decodedSignature, $algorithm);

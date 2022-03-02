@@ -1,20 +1,20 @@
 <?php
 
-namespace NFePHP\Common\Tags;
-
 /**
  * Abstract class to build Make::class
  */
 
+namespace NFePHP\Common\Tags;
+
 use NFePHP\Common\DOMImproved as Dom;
 use NFePHP\Common\Keys;
 use NFePHP\Common\Tags\TagInterface;
-use \DOMElement;
+use DOMElement;
 
 abstract class MakeBase
 {
     /**
-     * @var NFePHP\Common\DOMImproved
+     * @var \NFePHP\Common\DOMImproved
      */
     protected $dom;
     /**
@@ -41,7 +41,7 @@ abstract class MakeBase
      * @var array
      */
     protected $available = [];
-    
+
     /**
      * Constructor
      */
@@ -53,7 +53,7 @@ abstract class MakeBase
         $this->root = $this->dom->createElement($this->rootname);
         $this->root->setAttribute("xmlns", $this->xmlns);
     }
-    
+
     /**
      * To force convertion strings to ASCII
      * @param bool $flag
@@ -66,7 +66,7 @@ abstract class MakeBase
         }
         return $this->onlyAscii;
     }
-    
+
     /**
      * Abstract function to convert Tag::classes into DOM objects
      */
@@ -103,12 +103,13 @@ abstract class MakeBase
         }
         return $this->$propname;
     }
-    
+
     /**
      * Load Tag::class
-     * @param string $className
+     * @template T
+     * @param T $className
      * @param array $arguments
-     * @return \NFePHP\Common\Tags\className
+     * @return T Será alguma classe do namespace \NFePHP\Common\Tags\
      */
     protected function loadTagClass($className, $arguments)
     {
@@ -127,7 +128,7 @@ abstract class MakeBase
     {
         $this->{$name} = $value;
     }
-    
+
     /**
      * Calculate and replace document Id
      * @return string

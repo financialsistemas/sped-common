@@ -15,19 +15,20 @@ class SoapClientExtended extends SoapClient
     {
         parent::SoapClient($wsdl, $options);
     }
-    
+
     /**
      * __doRequest
      * Changes the original behavior of the class by removing prefixes,
      * suffixes and line breaks that are not supported by some webservices
      * due to their particular settings
      * @param  string $request
-     * @param  string$location
+     * @param  string $location
      * @param  string $action
      * @param  int $version
      * @param  int $oneWay
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function __doRequest($request, $location, $action, $version, $oneWay = 0)
     {
         $search = [":ns1","ns1:","\n","\r"];

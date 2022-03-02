@@ -2,13 +2,10 @@
 
 namespace NFePHP\Common\Soap;
 
-use League\Flysystem\FilesystemException;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use NFePHP\Common\Certificate;
 use NFePHP\Common\Exception\RuntimeException;
 use NFePHP\Common\Strings;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Adapter\Local;
+use NFePHP\Common\Files;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -98,11 +95,7 @@ abstract class SoapBase implements SoapInterface
      */
     protected $disableCertValidation = false;
     /**
-     * @var \League\Flysystem\Adapter\Local
-     */
-    protected $adapter;
-    /**
-     * @var \League\Flysystem\Filesystem
+     * @var Files
      */
     protected $filesystem;
     /**
@@ -114,9 +107,10 @@ abstract class SoapBase implements SoapInterface
      */
     protected $encriptPrivateKey = false;
     /**
+     * CURL_HTTP_VERSION_NONE == 0 - deixa o cURL decidir que protocolo usar
      * @var integer
      */
-    protected $httpver;
+    protected $httpver = 0;
     /**
      * @var bool
      */
@@ -273,10 +267,10 @@ abstract class SoapBase implements SoapInterface
         if (empty($folderRealPath)) {
             $path = '/sped-'
                 . $this->uid()
-                .'/'
+                . '/'
                 . $mapto
                 . '/' ;
-            $folderRealPath = sys_get_temp_dir().$path;
+            $folderRealPath = sys_get_temp_dir() . $path;
         }
         if (substr($folderRealPath, -1) !== '/') {
             $folderRealPath .= '/';
@@ -304,8 +298,7 @@ abstract class SoapBase implements SoapInterface
      */
     protected function setLocalFolder($folder = '')
     {
-        $this->adapter = new LocalFilesystemAdapter($folder);
-        $this->filesystem = new Filesystem($this->adapter);
+        $this->filesystem = new Files($folder);
     }
 
     /**
@@ -535,20 +528,19 @@ abstract class SoapBase implements SoapInterface
                 $this->temppass
             );
         }
-        try {
-            $this->filesystem->write(
-                $this->prifile,
-                $private
-            );
-            $this->filesystem->write(
-                $this->pubfile,
-                $this->certificate->publicKey
-            );
-            $this->filesystem->write(
-                $this->certfile,
-                $private . "{$this->certificate}"
-            );
-        } catch (FilesystemException $e) {
+        $ret &= $this->filesystem->put(
+            $this->prifile,
+            $private
+        );
+        $ret &= $this->filesystem->put(
+            $this->pubfile,
+            $this->certificate->publicKey
+        );
+        $ret &= $this->filesystem->put(
+            $this->certfile,
+            $private . "{$this->certificate}"
+        );
+        if (!$ret) {
             throw new RuntimeException(
                 'Unable to save temporary key files in folder.'
             );
@@ -563,10 +555,10 @@ abstract class SoapBase implements SoapInterface
     protected function randomName($n = 10)
     {
         $name = $this->certsdir . Strings::randomString($n) . '.pem';
-        if (!$this->filesystem->fileExists($name)) {
+        if (!$this->filesystem->has($name)) {
             return $name;
         }
-        $this->randomName($n+5);
+        $this->randomName($n + 5);
     }
 
     /**
@@ -575,26 +567,34 @@ abstract class SoapBase implements SoapInterface
      */
     public function removeTemporarilyFiles()
     {
-        if (empty($this->filesystem) || empty($this->certsdir)) {
-            return;
-        }
-        //remove os certificados
-        $this->filesystem->delete($this->certfile);
-        $this->filesystem->delete($this->prifile);
-        $this->filesystem->delete($this->pubfile);
-        //remove todos os arquivos antigos
-        $contents = $this->filesystem->listContents($this->certsdir, true);
-        $dt = new \DateTime();
-        $tint = new \DateInterval("PT".$this->waitingTime."M");
-        $tint->invert = 1;
-        $tsLimit = $dt->add($tint)->getTimestamp();
-        foreach ($contents as $item) {
-            if ($item['type'] == 'file') {
-                $timestamp = $this->filesystem->lastModified($item['path']);
-                if ($timestamp < $tsLimit) {
-                    $this->filesystem->delete($item['path']);
+        try {
+            if (empty($this->filesystem) || empty($this->certsdir)) {
+                return;
+            }
+            //remove os certificados
+            $this->filesystem->delete($this->certfile);
+            $this->filesystem->delete($this->prifile);
+            $this->filesystem->delete($this->pubfile);
+            //remove todos os arquivos antigos
+            $contents = $this->filesystem->listContents($this->certsdir, true);
+            $dt = new \DateTime();
+            $tint = new \DateInterval("PT" . $this->waitingTime . "M");
+            $tint->invert = 1;
+            $tsLimit = $dt->add($tint)->getTimestamp();
+            foreach ($contents as $item) {
+                if ($item['type'] == 'file') {
+                    if ($this->filesystem->has($item['path'])) {
+                        $timestamp = $this->filesystem->getTimestamp($item['path']);
+                        if ($timestamp < $tsLimit) {
+                            $this->filesystem->delete($item['path']);
+                        }
+                    }
                 }
             }
+        } catch (\Throwable $e) {
+            //impedir de ocorrer exception em ambientes muito comporrentes
+            //porem nesses casos devem ser feitas limpezas periodicas caso
+            //não seja usado o diretorio /tmp pois não será auto limpante
         }
     }
 
@@ -614,15 +614,15 @@ abstract class SoapBase implements SoapInterface
         $now = \DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
         $time = substr($now->format("ymdHisu"), 0, 16);
         try {
-            $this->filesystem->write(
+            $this->filesystem->put(
                 $this->debugdir . $time . "_" . $operation . "_sol.txt",
                 $request
             );
-            $this->filesystem->write(
+            $this->filesystem->put(
                 $this->debugdir . $time . "_" . $operation . "_res.txt",
                 $response
             );
-        } catch (FilesystemException $e) {
+        } catch (\Exception $e) {
             throw new RuntimeException(
                 'Unable to create debug files.'
             );

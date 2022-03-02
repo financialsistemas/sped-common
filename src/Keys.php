@@ -63,7 +63,7 @@ class Keys
         );
         return $key . self::verifyingDigit($key);
     }
-    
+
     /**
      * Verifies that the key provided is valid
      * @param string $key
@@ -81,7 +81,7 @@ class Keys
         }
         return false;
     }
-    
+
     /**
      * This method calculates verifying digit
      * @param string $key
@@ -107,7 +107,7 @@ class Keys
         }
         return (string) $vdigit;
     }
-    
+
     /**
      * Generate and return a 8 digits random number
      * for cNF tag
@@ -118,7 +118,7 @@ class Keys
     {
         $loop = true;
         while ($loop) {
-            $cnf = str_pad(mt_rand(0, 99999999), 8, '0', STR_PAD_LEFT);
+            $cnf = str_pad(strval(mt_rand(0, 99999999)), 8, '0', STR_PAD_LEFT);
             $loop = !self::cNFIsValid($cnf);
             if (!empty($nnf)) {
                 if (intval($cnf) === intval($nnf)) {
@@ -128,7 +128,7 @@ class Keys
         }
         return $cnf;
     }
-    
+
     /**
      * Verify if cNF number is valid NT2019.001
      * @param string $cnf
@@ -142,5 +142,29 @@ class Keys
             '67890123', '78901234', '89012345', '90123456', '01234567'
         ];
         return !in_array($cnf, $defs);
+    }
+
+    /**
+     * Return elements of key
+     * @param string $key
+     * @return array
+     */
+    public static function decompile($key)
+    {
+        if (strlen($key) != 44) {
+            return [];
+        }
+        return [
+            'cuf'       => substr($key, 0, 2),
+            'ano'       => substr($key, 2, 2),
+            'mes'       => substr($key, 4, 2),
+            'cnpj'      => substr($key, 6, 14),
+            'modelo'    => substr($key, 20, 2),
+            'serie'     => substr($key, 22, 3),
+            'nnf'       => substr($key, 25, 9),
+            'tpemis'    => substr($key, 34, 1),
+            'cnf'       => substr($key, 35, 8),
+            'dv'        => substr($key, -1)
+        ];
     }
 }
