@@ -12,7 +12,7 @@
 
 namespace NFePHP\Common;
 
-use ForceUTF8\Encoding;
+use NFePHP\Common\Encoding;
 
 class Strings
 {
@@ -158,7 +158,7 @@ class Strings
      */
     public static function onlyNumbers($string)
     {
-        return preg_replace("/[^0-9]/", "", $string);
+        return preg_replace("/[^0-9]/", "", (string) $string);
     }
 
     /**

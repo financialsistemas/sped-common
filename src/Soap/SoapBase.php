@@ -6,7 +6,6 @@ use NFePHP\Common\Certificate;
 use NFePHP\Common\Exception\RuntimeException;
 use NFePHP\Common\Strings;
 use NFePHP\Common\Files;
-use Psr\Log\LoggerInterface;
 
 /**
  * Soap base class
@@ -55,10 +54,6 @@ abstract class SoapBase implements SoapInterface
      */
     protected $certificate;
     /**
-     * @var LoggerInterface|null
-     */
-    protected $logger;
-    /**
      * @var string
      */
     protected $tempdir;
@@ -90,6 +85,10 @@ abstract class SoapBase implements SoapInterface
      * @var bool
      */
     protected $disablesec = false;
+    /**
+     * @var string|null
+     */
+    protected $security_level;
     /**
      * @var bool
      */
@@ -151,13 +150,10 @@ abstract class SoapBase implements SoapInterface
     /**
      * SoapBase constructor.
      * @param Certificate|null $certificate
-     * @param LoggerInterface|null $logger
      */
     public function __construct(
-        Certificate $certificate = null,
-        LoggerInterface $logger = null
+        ?Certificate $certificate = null
     ) {
-        $this->logger = $logger;
         $this->loadCertificate($certificate);
     }
 
@@ -167,7 +163,7 @@ abstract class SoapBase implements SoapInterface
      * @return void
      * @throws Certificate\Exception\Expired
      */
-    private function isCertificateExpired(Certificate $certificate = null)
+    private function isCertificateExpired(?Certificate $certificate = null)
     {
         if (!$this->disableCertValidation) {
             if (null !== $certificate && $certificate->isExpired()) {
@@ -206,6 +202,30 @@ abstract class SoapBase implements SoapInterface
     }
 
     /**
+     * Seta o nivel de segurança na comunicação SSL
+     * NOTA: o defaul é DEFAULT@SECLEVEL=2, caso seja passado
+     * o param = 1 então o nivel será alterado para DEFAULT@SECLEVEL=1
+     *
+     * NOTA: somente haverá alteração do nivel de segurança caso seja passado o param=1
+     *
+     * NOTA: esse método pode resolvel o problema de "servidores mal conficurados" com nível de segurança baixo
+     * fornecendo uma chave DH muito pequena com o erro error:141A318A:SSL routines:tls_process_ske_dhe:dh key too small
+     *
+     * NOTA: isso também pode ser resolvido alterando o parametro diretamente na configuração do OpenSSL,
+     * que no caso do Debian fica em /etc/ssl/openssl.cnf, alterando o parâmetro
+     * CipherString = DEFAULT@SECLEVEL=2 para CipherString = DEFAULT@SECLEVEL=1
+     *
+     * @return string
+     */
+    public function setSecurityLevel(bool $param = false)
+    {
+        if ($param) {
+            $this->security_level = 'DEFAULT@SECLEVEL=1';
+        }
+        return $this->security_level ?? 'DEFAULT';
+    }
+
+    /**
      * Force http protocol version
      *
      * @param null|string $version
@@ -232,7 +252,7 @@ abstract class SoapBase implements SoapInterface
      * @param string $capath
      * @return void
      */
-    public function loadCA($capath)
+    public function loadCA(string $capath)
     {
         if (is_file($capath)) {
             $this->casefaz = $capath;
@@ -258,7 +278,9 @@ abstract class SoapBase implements SoapInterface
      */
     public function setTemporaryFolder($folderRealPath = null)
     {
-        $mapto = $this->certificate->getCnpj() ?? $this->certificate->getCpf();
+        $mapto = !empty($this->certificate->getCnpj())
+            ? $this->certificate->getCnpj()
+            : $this->certificate->getCpf();
         if (empty($mapto)) {
             throw new RuntimeException(
                 'Foi impossivel identificar o OID do CNPJ ou do CPF.'
@@ -316,22 +338,12 @@ abstract class SoapBase implements SoapInterface
      * @param Certificate $certificate
      * @return void
      */
-    public function loadCertificate(Certificate $certificate = null)
+    public function loadCertificate(?Certificate $certificate = null)
     {
         $this->isCertificateExpired($certificate);
         if (null !== $certificate) {
             $this->certificate = $certificate;
         }
-    }
-
-    /**
-     * Set logger class
-     * @param LoggerInterface $logger
-     * @return LoggerInterface
-     */
-    public function loadLogger(LoggerInterface $logger)
-    {
-        return $this->logger = $logger;
     }
 
     /**
@@ -470,7 +482,7 @@ abstract class SoapBase implements SoapInterface
             '<%s:Header><%s xmlns="%s">%s</%s></%s:Header>',
             $envelopPrefix,
             $header->name,
-            $header->namespace === null ? '' : $header->namespace,
+            $header->namespace == null ? '' : $header->namespace,
             $headerItems,
             $header->name,
             $envelopPrefix

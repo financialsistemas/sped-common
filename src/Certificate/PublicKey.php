@@ -25,6 +25,14 @@ class PublicKey implements VerificationInterface
      */
     public $commonName;
     /**
+     * @var string
+     */
+    public $icp;
+    /**
+     * @var string
+     */
+    public $caurl;
+    /**
      * @var \DateTime
      */
     public $validFrom;
@@ -96,12 +104,21 @@ CONTENT;
         }
         if (isset($detail['issuer']['organizationalUnitName'])) {
             $this->cspName = is_array($detail['issuer']['organizationalUnitName'])
-                ? implode(', ', $detail['issuer']['organizationalUnitName'])
-                : $detail['issuer']['organizationalUnitName'];
+                ? implode(', ', $detail['issuer']['organizationalUnitName']) . ' - ' . $detail['issuer']['commonName']
+                : $detail['issuer']['organizationalUnitName'] . ' - ' . $detail['issuer']['commonName'];
         }
         $this->serialNumber = $detail['serialNumber'];
-        $this->validFrom = \DateTime::createFromFormat('ymdHis\Z', $detail['validFrom']);
-        $this->validTo = \DateTime::createFromFormat('ymdHis\Z', $detail['validTo']);
+        $this->icp = $detail['subject']['organizationName'] ?? '';
+        $authority = $detail['extensions']['authorityInfoAccess'] ?? '';
+        if (!empty($authority)) {
+            $txt = explode("\n", $authority);
+            $this->caurl = $this->between($txt[0], 'http', ['.p7b', '.p7c']);
+        }
+        // openssl_x509_parse retorna validFrom/validTo em UTC (sufixo "Z" = Zulu).
+        // Sem o DateTimeZone explícito, createFromFormat usa a tz default do PHP, deturpando o valor absoluto.
+        $utc = new \DateTimeZone('UTC');
+        $this->validFrom = \DateTime::createFromFormat('ymdHis\Z', $detail['validFrom'], $utc);
+        $this->validTo = \DateTime::createFromFormat('ymdHis\Z', $detail['validTo'], $utc);
         if (isset($detail['name'])) {
             $arrayName = explode("/", $detail["name"]);
             $arrayName = array_reverse($arrayName);
@@ -173,5 +190,36 @@ CONTENT;
     public function cpf()
     {
         return Asn1::getCPF($this->unFormated());
+    }
+
+    /**
+     * @param string $string
+     * @param string $start
+     * @param array $end
+     * @return string
+     */
+    protected function between(string $string, string $start, array $end = ['p7b', 'p7c']): string
+    {
+        $string = ' ' . $string;
+        $final = null;
+        foreach ($end as $fim) {
+            if (strpos($string, $fim) !== false) {
+                $final = $fim;
+                break;
+            }
+        }
+        if (empty($final)) {
+            return '';
+        }
+        $ini = strpos($string, $start);
+        if ($ini == 0) {
+            return '';
+        }
+        $fim = strpos($string, $final) - 13;
+        $path = substr($string, $ini, $fim);
+        if (substr($path, -4) === $final) {
+            return $path;
+        }
+        return '';
     }
 }

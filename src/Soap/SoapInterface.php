@@ -16,7 +16,6 @@
 namespace NFePHP\Common\Soap;
 
 use NFePHP\Common\Certificate;
-use Psr\Log\LoggerInterface;
 
 interface SoapInterface
 {
@@ -34,12 +33,6 @@ interface SoapInterface
      * @param Certificate $certificate
      */
     public function loadCertificate(Certificate $certificate);
-
-    /**
-     * Set logger class
-     * @param LoggerInterface $logger
-     */
-    public function loadLogger(LoggerInterface $logger);
 
     /**
      * Set timeout for connection
@@ -81,6 +74,13 @@ interface SoapInterface
      * @return bool
      */
     public function disableCertValidation($flag = true);
+
+    /**
+     * Set security level
+     * @param bool $param
+     * @return string
+     */
+    public function setSecurityLevel(bool $param = false);
 
     /**
      * Set option to encrypt private key before save in filesystem

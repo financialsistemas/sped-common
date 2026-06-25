@@ -21,18 +21,16 @@ use NFePHP\Common\Soap\SoapInterface;
 use NFePHP\Common\Exception\SoapException;
 use NFePHP\Common\Validator;
 use NFePHP\Common\Certificate;
-use Psr\Log\LoggerInterface;
 
 class SoapCurl extends SoapBase implements SoapInterface
 {
     /**
      * Constructor
      * @param Certificate $certificate
-     * @param LoggerInterface $logger
      */
-    public function __construct(Certificate $certificate = null, LoggerInterface $logger = null)
+    public function __construct(?Certificate $certificate = null)
     {
-        parent::__construct($certificate, $logger);
+        parent::__construct($certificate);
     }
 
     /**
@@ -89,10 +87,15 @@ class SoapCurl extends SoapBase implements SoapInterface
             curl_setopt($oCurl, CURLOPT_HTTP_VERSION, $this->httpver);
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, 0);
+            if (!empty($this->security_level)) {
+                curl_setopt($oCurl, CURLOPT_SSL_CIPHER_LIST, "{$this->security_level}");
+            }
             if (!$this->disablesec) {
                 curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, 2);
-                if (is_file($this->casefaz)) {
-                    curl_setopt($oCurl, CURLOPT_CAINFO, $this->casefaz);
+                if (!empty($this->casefaz)) {
+                    if (is_file($this->casefaz)) {
+                        curl_setopt($oCurl, CURLOPT_CAINFO, $this->casefaz);
+                    }
                 }
             }
             curl_setopt($oCurl, CURLOPT_SSLVERSION, $this->soapprotocol);
@@ -128,19 +131,25 @@ class SoapCurl extends SoapBase implements SoapInterface
             throw SoapException::unableToLoadCurl($e->getMessage());
         }
         if ($this->soaperror != '') {
-            if (intval($this->soaperror_code) == 0) {
+            if ((int)$this->soaperror_code == 0) {
                 $this->soaperror_code = 7;
             }
             throw SoapException::soapFault($this->soaperror . " [$url]", $this->soaperror_code);
         }
         if ($httpcode != 200) {
             $msg = $this->getCodeMessage($httpcode);
-            if (intval($httpcode) == 0) {
+            if ((int) $httpcode == 0) {
                 $httpcode = 52;
-            } elseif ($httpcode == 500) {
+            } elseif ((int) $httpcode == 500) {
                 $httpcode = 89;
             }
             throw SoapException::soapFault($msg, $httpcode);
+        }
+        if (empty($this->responseBody)) {
+            throw SoapException::soapFault('Retorno da SEFAZ VAZIO', 99);
+        }
+        if (!Validator::isXML($this->responseBody)) {
+            throw SoapException::soapFault('O retorno não é um XML ' . $this->responseBody, 99);
         }
         return $this->responseBody;
     }

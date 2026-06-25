@@ -21,6 +21,21 @@ class KeysTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($key, '35170458716523000119550010000000121000123458');
     }
 
+    public function testBuildWithCnpjAlfa()
+    {
+        $cUF = '52';
+        $ano = '06';
+        $mes = '4';
+        $cnpj = '12ABC34501DE35';
+        $mod = '55';
+        $serie = '12';
+        $numero = '780';
+        $tpEmis = '1';
+        $codigo = '26730161';
+        $key = Keys::build($cUF, $ano, $mes, $cnpj, $mod, $serie, $numero, $tpEmis, $codigo);
+        $this->assertEquals($key, '52060412ABC34501DE35550120000007801267301610');
+    }
+
     public function testBuildWithCPF()
     {
         $cUF = 35;
@@ -64,5 +79,23 @@ class KeysTest extends \PHPUnit\Framework\TestCase
         $actual = Keys::verifyingDigit($key);
         $expected = '';
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testIsValidAlphanumericKey()
+    {
+        $key = '520604VL1J4ZDW000163550120000007801267301615';
+        $this->assertTrue(Keys::isValid($key));
+    }
+
+    public function testBuildWithAlphanumericCnpj()
+    {
+        $key = Keys::build('52', '06', '04', 'VL1J4ZDW000163', '55', '012', '000000780', '1', '26730161');
+        $this->assertEquals('520604VL1J4ZDW000163550120000007801267301615', $key);
+    }
+
+    public function testExtractAccessKey()
+    {
+        $id = 'NFe520604VL1J4ZDW000163550120000007801267301615';
+        $this->assertEquals('520604VL1J4ZDW000163550120000007801267301615', Keys::extractAccessKey($id));
     }
 }
